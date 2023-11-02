@@ -1,18 +1,22 @@
 "use client";
-import { useState } from "react";
-import { Input, Button } from "@nextui-org/react";
-import {
-  GithubIcon,
-  GoogleIcon,
-  MailIcon,
-  PasswordIcon,
-} from "@/components/Icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { useState, MouseEvent } from "react";
+import { Button, useDisclosure } from "@nextui-org/react";
+import { GithubIcon, GoogleIcon } from "@/components/Icons";
 import PasswordField from "@/components/PasswordField";
 import EmailField from "@/components/EmailField";
 import Link from "next/link";
+import {
+  handleGithubSignIn,
+  handleGoogleSignIn,
+} from "../../lib/action/LoginFunctionalities";
+import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
+import { signIn } from "next-auth/react";
+import { useDispatch, useSelector } from "react-redux";
+
 export default function Login() {
+  const dispatch = useDispatch();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -20,6 +24,31 @@ export default function Login() {
   const [isEmailError, setIsEmailError] = useState<boolean>(false);
   //TODO: add Error message
   const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
+
+  const router = useRouter();
+  const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    onOpen();
+    try {
+      const response = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+      if (response?.ok) {
+        router.push("./");
+        toast.success("Login Successful");
+      } else {
+        toast.error("login failed");
+      }
+    } catch (error) {
+      console.error(`LoginError:${error}`);
+    }
+    console.log({ email, password });
+    setIsLoading(false);
+  };
+
   return (
     <main>
       <div className="h-screen w-screen items-center justify-center flex bg-cover bg-no-repeat bg-[url('https://img.freepik.com/free-photo/pile-3d-play-button-logos_1379-880.jpg?w=1380&t=st=1698775013~exp=1698775613~hmac=3cf1e4be4c648dc5d68267a53e38725d97a2dfb98497e8791b9188e3732b285f')]">
@@ -30,11 +59,17 @@ export default function Login() {
             </p>
             <div>
               <div className="flex items-center justify-center space-x-4 mt-3">
-                <button className="flex items-center py-2 px-4 text-sm uppercase rounded bg-white hover:bg-gray-100 text-indigo-500 border border-transparent hover:border-black border-b border-b-black hover:text-gray-700 shadow-md hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
+                <button
+                  onClick={handleGithubSignIn}
+                  className="flex items-center py-2 px-4 text-sm uppercase rounded bg-white hover:bg-gray-100 text-indigo-500 border border-transparent hover:border-black border-b border-b-black hover:text-gray-700 shadow-md hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
+                >
                   <GithubIcon className="w-6 h-6 mr-3" />
                   Github
                 </button>
-                <button className="flex items-center py-2 px-4 text-sm uppercase rounded bg-white hover:bg-gray-100 text-indigo-500 border border-transparent hover:border-black border-b border-b-black hover:text-gray-700 shadow-md hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
+                <button
+                  onClick={handleGoogleSignIn}
+                  className="flex items-center py-2 px-4 text-sm uppercase rounded bg-white hover:bg-gray-100 text-indigo-500 border border-transparent hover:border-black border-b border-b-black hover:text-gray-700 shadow-md hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
+                >
                   <GoogleIcon className="w-6 h-6 mr-3" />
                   Google
                 </button>
@@ -46,7 +81,7 @@ export default function Login() {
               {" "}
               Or sign in with credentials{" "}
             </p>
-            <form className="mt-6">
+            <form className="mt-6" onSubmit={handleLoginSubmit}>
               <div className="flex flex-col gap-5">
                 <EmailField
                   isEmailError={isEmailError}
@@ -73,7 +108,8 @@ export default function Login() {
 
               <div className="flex items-center justify-center mt-4">
                 <Button
-                  onClick={() => setIsLoading(!isLoading)}
+                  type="submit"
+                  // onClick={() => setIsLoading(!isLoading)}
                   radius="full"
                   className="bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg px-10"
                   isLoading={isLoading}

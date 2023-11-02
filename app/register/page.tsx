@@ -1,18 +1,22 @@
 "use client";
-import { useState } from "react";
-import { Input, Button } from "@nextui-org/react";
-import {
-  GithubIcon,
-  GoogleIcon,
-  MailIcon,
-  PasswordIcon,
-} from "@/components/Icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { use, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@nextui-org/react";
+import { GithubIcon, GoogleIcon } from "@/components/Icons";
 import PasswordField from "@/components/PasswordField";
 import EmailField from "@/components/EmailField";
 import Link from "next/link";
+import {
+  handleGithubSignIn,
+  handleGoogleSignIn,
+} from "@/lib/action/LoginFunctionalities";
+import UserNameField from "@/components/UsernameField";
+import toast, { Toaster } from "react-hot-toast";
+
 export default function Register() {
+  const router = useRouter();
+
+  const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -22,21 +26,72 @@ export default function Register() {
   //TODO: add Error message
   const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
 
+  const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      console.log({ email, password, confirmPassword });
+      const regex = /^(?=.*\d)(?=.*[a-z]).{8,}$/;
+
+      if (!regex.test(password)) {
+        setIsPasswordError(true);
+        setPasswordErrorMsg(
+          "Password must contain at least 8 characters,at least one lowercase letter ,at least one number"
+        );
+      } else {
+        if (password !== confirmPassword) {
+          setIsPasswordError(true);
+          setPasswordErrorMsg("Passwords do not match");
+        } else {
+          const response = await fetch("/api/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: username,
+              email: email,
+              password: password,
+            }),
+          });
+          const userInfo = await response.json();
+          if (userInfo.message) {
+            console.log(userInfo);
+            toast.error(userInfo.message);
+          } else {
+            toast.success("User registration Completed");
+            router.push("/login");
+          }
+        }
+      }
+    } catch (error: any) {
+      toast.error(error.toString());
+      console.log(`Register failed: ${error}`);
+    }
+
+    setIsLoading(false);
+  };
   return (
     <main>
       <div className="h-screen w-screen items-center justify-center flex bg-cover bg-no-repeat bg-[url('https://img.freepik.com/free-photo/pile-3d-play-button-logos_1379-880.jpg?w=1380&t=st=1698775013~exp=1698775613~hmac=3cf1e4be4c648dc5d68267a53e38725d97a2dfb98497e8791b9188e3732b285f')]">
-        <div className=" rounded-[16px] bg-slate-800 border border-slate-400 shadow-lg backdrop-blur-sm bg-opacity-30 p-8 mx-auto">
+        <div className=" rounded-[16px] max-w-2xl bg-slate-800 border border-slate-400 shadow-lg backdrop-blur-sm bg-opacity-30 p-8 mx-auto">
           <div className="bg-white rounded-t-lg p-8 ">
             <p className="text-center text-sm text-gray-400 font-bold">
               Sign up with
             </p>
             <div>
               <div className="flex items-center justify-center space-x-4 mt-3">
-                <button className="flex items-center py-2 px-4 text-sm uppercase rounded bg-white hover:bg-gray-100 text-indigo-500 border border-transparent hover:border-black border-b border-b-black hover:text-gray-700 shadow-md hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
+                <button
+                  onClick={handleGithubSignIn}
+                  className="flex items-center py-2 px-4 text-sm uppercase rounded bg-white hover:bg-gray-100 text-indigo-500 border border-transparent hover:border-black border-b border-b-black hover:text-gray-700 shadow-md hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
+                >
                   <GithubIcon className="w-6 h-6 mr-3" />
                   Github
                 </button>
-                <button className="flex items-center py-2 px-4 text-sm uppercase rounded bg-white hover:bg-gray-100 text-indigo-500 border border-transparent hover:border-black border-b border-b-black hover:text-gray-700 shadow-md hover:shadow-lg font-medium transition transform hover:-translate-y-0.5">
+                <button
+                  onClick={handleGoogleSignIn}
+                  className="flex items-center py-2 px-4 text-sm uppercase rounded bg-white hover:bg-gray-100 text-indigo-500 border border-transparent hover:border-black border-b border-b-black hover:text-gray-700 shadow-md hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
+                >
                   <GoogleIcon className="w-6 h-6 mr-3" />
                   Google
                 </button>
@@ -48,8 +103,9 @@ export default function Register() {
               {" "}
               Or sign up with credentials{" "}
             </p>
-            <form className="mt-6">
+            <form className="mt-6" onSubmit={handleRegisterSubmit}>
               <div className="flex flex-col gap-5">
+                <UserNameField setUsername={setUsername} username={username} />
                 <EmailField
                   isEmailError={isEmailError}
                   email={email}
@@ -57,7 +113,7 @@ export default function Register() {
                 />
 
                 <PasswordField
-                  errorMessage={passwordErrorMsg}
+                  errorMessage={""}
                   isPasswordError={isPasswordError}
                   label="Password"
                   password={password}
@@ -75,7 +131,7 @@ export default function Register() {
 
               <div className="flex items-center justify-center mt-8">
                 <Button
-                  onClick={() => setIsLoading(!isLoading)}
+                  type="submit"
                   radius="full"
                   className="bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg px-10"
                   isLoading={isLoading}

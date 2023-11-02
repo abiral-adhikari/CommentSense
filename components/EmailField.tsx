@@ -8,17 +8,29 @@ interface Props {
   setEmail: (value: SetStateAction<string>) => void;
 }
 const EmailField = ({ email, setEmail, isEmailError }: Props) => {
+  const [isValid, setIsValid] = useState(false);
+
+  const validateEmail = (email: string) => {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputEmail = e.target.value;
+    setEmail(inputEmail);
+    setIsValid(validateEmail(inputEmail));
+  };
   return (
     <Input
       isRequired
       type="email"
       label="Email"
       value={email}
-      errorMessage={isEmailError ? "Please enter a valid email" : ""}
+      errorMessage={
+        isValid || isEmailError || !email ? "" : "Please enter a valid email"
+      }
       variant="bordered"
       placeholder="you@example.com"
-      onChange={(e) => setEmail(e.target.value)}
-      isInvalid={false}
+      onChange={handleChange}
       labelPlacement="outside"
       // className="border-1 border-black"
       startContent={
