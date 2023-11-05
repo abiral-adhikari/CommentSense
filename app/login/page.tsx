@@ -51,8 +51,9 @@ export default function Login() {
 
   return (
     <main>
-      <div className="h-screen w-screen items-center justify-center flex bg-cover bg-no-repeat bg-[url('https://img.freepik.com/free-photo/pile-3d-play-button-logos_1379-880.jpg?w=1380&t=st=1698775013~exp=1698775613~hmac=3cf1e4be4c648dc5d68267a53e38725d97a2dfb98497e8791b9188e3732b285f')]">
+      <div className=" items-center justify-center flex  ">
         <div className=" rounded-[16px] bg-slate-800 border border-slate-400 shadow-lg backdrop-blur-sm bg-opacity-30 p-8 mx-auto">
+          {" "}
           <div className="bg-white rounded-t-lg p-8 ">
             <p className="text-center text-sm text-gray-400 font-bold">
               Sign in with

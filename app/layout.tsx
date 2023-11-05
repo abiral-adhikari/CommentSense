@@ -6,6 +6,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import AuthProvider from "../lib/context/AuthProvider";
 import ReduxProvider from "@/lib/context/ReduxProvider";
 import { Toaster } from "react-hot-toast";
+import Navbar from "@/components/Navbar";
 config.autoAddCss = false;
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,9 +25,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <ReduxProvider>
           <AuthProvider>
-            {" "}
-            {children}
-            <Toaster />
+            <main className="max-w-10xl mx-auto">
+              {/* <Navbar /> */}
+              {children}
+              <Toaster />
+            </main>
           </AuthProvider>{" "}
         </ReduxProvider>
       </body>

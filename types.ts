@@ -19,3 +19,9 @@ export interface Buttontype {
   onPress: () => void;
   buttonLabel: string;
 }
+
+export interface Comments {
+  type: number;
+  comment: string;
+  score: number;
+}
