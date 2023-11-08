@@ -25,10 +25,10 @@ export default async function Home() {
   return (
     <>
       <Navbar />
-      <div className="sm:flex hidden mr-10 relative">
+      {/* <div className="sm:flex hidden mr-10 relative">
         <Sidebar />
-      </div>
-      {/* <section className="px-6  md:px-20 py-24">
+      </div> */}
+      <section className="px-6  md:px-20 py-24">
         <div className="flex max-xl:flex-col gap-16">
           <div className="flex flex-col justify-center">
             <p className="small-text">
@@ -56,9 +56,14 @@ export default async function Home() {
       <Divider className="my-4" />
 
       <section className="px-6 md:px-20 py-5 items-center">
-    
         <h1 className="head-text mb-8">Comments Analysis</h1>
         <div className="flex flex-wrap justify-center items-center mx-auto gap-5 ">
+          <CommentCards
+            key={`jvuyyvuy`}
+            comment="hjuyv yvuvyvvvvvvvv h cuguv uvuuccucc hcucuctcccccccccccccccccccccccccc hhhhhhhhhhhhhhhhhhhhhhhh ppppppppppppppppppppppppp"
+            score={90}
+            type={4}
+          />
           {datassss.map((comment, index) => (
             <CommentCards
               key={`${comment.type}-${index}`}
@@ -68,7 +73,7 @@ export default async function Home() {
             />
           ))}
         </div>
-      </section> */}
+      </section>
     </>
   );
 }
