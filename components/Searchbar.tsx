@@ -1,11 +1,8 @@
 "use client";
 
 import { scrollToSection } from "@/lib/action/ScrollFunctionalities";
-import { fetchComments } from "@/lib/action/YoutubeCommentFetch";
-import { Dropdown } from "@nextui-org/react";
 import React, { FormEvent, useState } from "react";
-import DropdownButton, { AutoSelect } from "./DropDown";
-import { model } from "mongoose";
+import { DropDownButton } from "./DropDown";
 
 const Searchbar = () => {
   const modelOptions = [
@@ -46,7 +43,7 @@ const Searchbar = () => {
     {
       title: "All comments",
       description:
-        "this will take long time. We will mail you after the result are processed",
+        "This will take long time. We will mail you after the result are processed",
     },
   ];
   const [searchPrompt, setSetsearchPrompt] = useState("");
@@ -110,22 +107,19 @@ const Searchbar = () => {
             {isLoading ? "Searching...." : "Search"}
           </button>
         </div>
-        <div className="flex items-center gap-2 max-h-7 flex-row">
-          <span className="text-gray-5600">Choose Model:</span>
-          <DropdownButton
+        <div className="flex items-center gap-2 mt-1 max-h-7 flex-row">
+          <DropDownButton
+            placeholder=" "
+            className="max-w-xs max-h-12"
+            label="Model Selection"
             options={modelOptions}
             setSelectedKeys={setModel}
             selectedKeys={model}
           />
-          <span className="text-gray-600">Comment Counts:</span>
-          <DropdownButton
-            options={commentOptions}
-            setSelectedKeys={setComment}
-            selectedKeys={comment}
-          />
-          <AutoSelect
+
+          <DropDownButton
             placeholder=" "
-            className="max-w-xs"
+            className="max-w-lg max-h-12"
             label="Comment Count"
             options={commentOptions}
             setSelectedKeys={setComment}

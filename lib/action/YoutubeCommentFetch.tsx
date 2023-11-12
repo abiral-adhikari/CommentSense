@@ -1,8 +1,4 @@
-const apiKeys = [
-  "AIzaSyCT7XGku7WgM36gSkAdIqaEKnyIxT4GqJo",
-  "API_KEY_2",
-  "API_KEY_3",
-]; // Add your API keys here
+const apiKeys = ["API_KEY_2", "API_KEY_3"]; // Add your API keys here
 let currentApiKeyIndex = 0;
 
 let nextPageToken = "";

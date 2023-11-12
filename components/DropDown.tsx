@@ -1,69 +1,6 @@
 import React from "react";
-import {
-  Autocomplete,
-  AutocompleteSection,
-  AutocompleteItem,
-} from "@nextui-org/react";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Button,
-} from "@nextui-org/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquareCaretDown } from "@fortawesome/free-solid-svg-icons";
-
+import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 type Props = {
-  options: {
-    title: string;
-    description: string;
-  }[];
-  selectedKeys: string;
-  setSelectedKeys: React.Dispatch<React.SetStateAction<string>>;
-};
-export default function DropdownButton({
-  options,
-  setSelectedKeys,
-  selectedKeys,
-}: Props) {
-  //   const [selectedKeys, setSelectedKeys] = React.useState(options[0].title);
-
-  return (
-    <Dropdown backdrop="blur">
-      <DropdownTrigger>
-        <Button variant="shadow" color="secondary" className="capitalize">
-          <div className="gap-1 flex items-center">
-            {" "}
-            {selectedKeys}
-            <FontAwesomeIcon icon={faSquareCaretDown} />
-          </div>
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu
-        aria-label="Single selection example"
-        variant="flat"
-        disallowEmptySelection
-        selectionMode="single"
-        selectedKeys={selectedKeys}
-        onSelectionChange={(e: Iterable<unknown> | ArrayLike<unknown>) => {
-          console.log(Array.from(e));
-          console.log(Array.from(e).join(", "));
-          console.log(Array.from(e).join(", ").replaceAll("_", " "));
-          setSelectedKeys(Array.from(e).join(", ").replaceAll("_", " "));
-        }}
-      >
-        {options.map((option) => (
-          <DropdownItem key={option.title} description={option.description}>
-            {option.title}
-          </DropdownItem>
-        ))}
-      </DropdownMenu>
-    </Dropdown>
-  );
-}
-
-type Propss = {
   options: {
     title: string;
     description: string;
@@ -75,14 +12,14 @@ type Propss = {
   setSelectedKeys: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export function AutoSelect({
+export function DropDownButton({
   label,
   options,
   setSelectedKeys,
   selectedKeys,
   className,
   placeholder,
-}: Propss) {
+}: Props) {
   return (
     <Autocomplete
       backdrop="blur"
@@ -120,3 +57,51 @@ export function AutoSelect({
     </Autocomplete>
   );
 }
+// type Props = {
+//   options: {
+//     title: string;
+//     description: string;
+//   }[];
+//   selectedKeys: string;
+//   setSelectedKeys: React.Dispatch<React.SetStateAction<string>>;
+// };
+// export default function DropdownButton({
+//   options,
+//   setSelectedKeys,
+//   selectedKeys,
+// }: Props) {
+//   //   const [selectedKeys, setSelectedKeys] = React.useState(options[0].title);
+
+//   return (
+//     <Dropdown backdrop="blur">
+//       <DropdownTrigger>
+//         <Button variant="shadow" color="secondary" className="capitalize">
+//           <div className="gap-1 flex items-center">
+//             {" "}
+//             {selectedKeys}
+//             <FontAwesomeIcon icon={faSquareCaretDown} />
+//           </div>
+//         </Button>
+//       </DropdownTrigger>
+//       <DropdownMenu
+//         aria-label="Single selection example"
+//         variant="flat"
+//         disallowEmptySelection
+//         selectionMode="single"
+//         selectedKeys={selectedKeys}
+//         onSelectionChange={(e: Iterable<unknown> | ArrayLike<unknown>) => {
+//           console.log(Array.from(e));
+//           console.log(Array.from(e).join(", "));
+//           console.log(Array.from(e).join(", ").replaceAll("_", " "));
+//           setSelectedKeys(Array.from(e).join(", ").replaceAll("_", " "));
+//         }}
+//       >
+//         {options.map((option) => (
+//           <DropdownItem key={option.title} description={option.description}>
+//             {option.title}
+//           </DropdownItem>
+//         ))}
+//       </DropdownMenu>
+//     </Dropdown>
+//   );
+// }
