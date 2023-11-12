@@ -25,3 +25,11 @@ export interface Comments {
   comment: string;
   score: number;
 }
+
+export interface CommentData {
+  type: number;
+  comment: string;
+  positive_score: number;
+  negative_score: number;
+  neutral_score: number;
+}

@@ -14,7 +14,7 @@ body {
 /* h2 {
 	@apply text-center;
 } */
-p {
+/* p {
 	@apply text-sm font-thin leading-5 tracking-[0.5px] mt-5 mb-[30px] mx-0;
 }
 span {
@@ -39,7 +39,7 @@ button:focus {
 
 button.ghost {
     @apply bg-transparent border-white;
-}
+} */
 
 /* form {
     @apply bg-white flex items-center justify-center flex-col h-full text-center px-[50px] py-0;
@@ -83,7 +83,7 @@ input {
 		z-index: 5;
 	}
 } */
-
+/* 
 .overlay-container {
 	position: absolute;
 	top: 0;
@@ -149,7 +149,7 @@ input {
 
 .container.right-panel-active .overlay-right {
   transform: translateX(20%);
-}
+} */
 
 
 /* .social-container {
