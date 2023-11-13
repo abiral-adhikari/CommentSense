@@ -1,5 +1,7 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const navIcons = [
@@ -9,6 +11,7 @@ const navIcons = [
 ];
 
 const Navbar = () => {
+  const router = useRouter();
   return (
     <header className="w-full ">
       <nav className="nav">
@@ -34,6 +37,15 @@ const Navbar = () => {
               className="object-contain"
             />
           ))}
+          <Image
+            onClick={() => router.push("./personaldetail")}
+            key={navIcons[2].alt}
+            src={navIcons[2].src}
+            alt={navIcons[2].alt}
+            width={28}
+            height={27}
+            className="object-contain"
+          />
         </div>
       </nav>
     </header>

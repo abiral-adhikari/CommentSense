@@ -2,8 +2,6 @@
 import { useState, MouseEvent } from "react";
 import { Button, useDisclosure } from "@nextui-org/react";
 import { GithubIcon, GoogleIcon } from "@/components/Icons";
-import PasswordField from "@/components/PasswordField";
-import EmailField from "@/components/EmailField";
 import Link from "next/link";
 import {
   handleGithubSignIn,
@@ -13,8 +11,14 @@ import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { signIn } from "next-auth/react";
 import { useDispatch, useSelector } from "react-redux";
+import { EmailField, PasswordField } from "@/components/TextField";
+import {
+  IS_SHOW_ERROR_MODAL,
+  IS_SHOW_SPINNER,
+} from "@/lib/store/Reducer/constant";
 
 export default function Login() {
+  const router = useRouter();
   const dispatch = useDispatch();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [email, setEmail] = useState<string>("");
@@ -25,10 +29,13 @@ export default function Login() {
   //TODO: add Error message
   const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
 
-  const router = useRouter();
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    dispatch({
+      type: IS_SHOW_SPINNER,
+      payload: true,
+    });
     onOpen();
     try {
       const response = await signIn("credentials", {
@@ -37,21 +44,36 @@ export default function Login() {
         redirect: false,
       });
       if (response?.ok) {
+        dispatch({
+          type: IS_SHOW_SPINNER,
+          payload: false,
+        });
+        toast.success("---Login Sucessful---");
         router.push("./");
-        toast.success("Login Successful");
       } else {
-        toast.error("login failed");
+        toast.error("---Login Failed---");
+
+        dispatch({
+          type: IS_SHOW_ERROR_MODAL,
+          payload: {
+            isShow: true,
+            title: "Error",
+            description:
+              "  Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus,consequatur ",
+          },
+        });
       }
     } catch (error) {
       console.error(`LoginError:${error}`);
     }
     console.log({ email, password });
+
     setIsLoading(false);
   };
 
   return (
     <main>
-      <div className=" items-center justify-center flex  ">
+      <div className="h-screen items-center justify-center flex  ">
         <div className=" rounded-[16px] bg-slate-800 border border-slate-400 shadow-lg backdrop-blur-sm bg-opacity-30 p-8 mx-auto">
           {" "}
           <div className="bg-white rounded-t-lg p-8 ">
@@ -100,7 +122,7 @@ export default function Login() {
 
                   <Link
                     className="mb-0  text-blue-800 underline font-bold text-end text-sm  "
-                    href={"./register"}
+                    href={"./forgotpassword"}
                   >
                     Forgot Password?
                   </Link>

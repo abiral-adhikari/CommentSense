@@ -27,7 +27,9 @@
     "react-responsive-carousel": "^3.2.23",
     "redux": "^4.2.1",
     "redux-thunk": "^2.4.2",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "zustand": "^4.4.4"
+
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.5",

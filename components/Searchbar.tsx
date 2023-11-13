@@ -3,6 +3,8 @@
 import { scrollToSection } from "@/lib/action/ScrollFunctionalities";
 import React, { FormEvent, useState } from "react";
 import { DropDownButton } from "./DropDown";
+import { useDispatch } from "react-redux";
+import { IS_SHOW_SPINNER } from "@/lib/store/Reducer/constant";
 
 const Searchbar = () => {
   const modelOptions = [
@@ -46,6 +48,7 @@ const Searchbar = () => {
         "This will take long time. We will mail you after the result are processed",
     },
   ];
+  const dispatch = useDispatch();
   const [searchPrompt, setSetsearchPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [model, setModel] = useState(modelOptions[0].title);
@@ -77,6 +80,11 @@ const Searchbar = () => {
       return;
     }
 
+    dispatch({
+      type: IS_SHOW_SPINNER,
+      payload: false,
+    });
+
     // fetchComments(searchPrompt);
 
     console.log({
@@ -84,6 +92,10 @@ const Searchbar = () => {
       model,
       comment,
       commentextracr: comment.match(/\d+/)![0],
+    });
+    dispatch({
+      type: IS_SHOW_SPINNER,
+      payload: true,
     });
     scrollToSection("CommentSection");
   };

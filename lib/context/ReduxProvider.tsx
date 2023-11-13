@@ -1,7 +1,7 @@
 "use client";
 
 import { Provider } from "react-redux";
-import store from "../reducers/store";
+import store from "../store/Reducer/store";
 
 export default function ReduxProvider({
   children,

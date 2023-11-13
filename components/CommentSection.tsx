@@ -6,13 +6,21 @@ import CommentCards from "./CommentsCards";
 import { motion } from "framer-motion";
 import { staggerContainer } from "@/lib/utils/motion";
 import { scrollToSection } from "@/lib/action/ScrollFunctionalities";
+import { useDispatch, useSelector } from "react-redux";
+import { ADD_COMMENT_DATA_SUCCESS } from "@/lib/store/Reducer/constant";
 
 const pageSize = 10; // Number of comments to display per page
 type Props = {
   datassss: CommentData[];
 };
 const CommentSection = ({ datassss }: Props) => {
-  if (datassss.length === 0) return;
+  const commentDatas: CommentData[] = useSelector(
+    (state: any) => state.CommentDataReducer
+  );
+
+  if (commentDatas.length === 0) return;
+
+  const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const [displayedComments, setDisplayedComments] = useState([
     {
@@ -28,12 +36,12 @@ const CommentSection = ({ datassss }: Props) => {
   useEffect(() => {
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const commentsToDisplay: CommentData[] = datassss.slice(
+    const commentsToDisplay: CommentData[] = commentDatas.slice(
       startIndex,
       endIndex
     );
     setDisplayedComments(commentsToDisplay);
-  }, [currentPage, datassss]);
+  }, [currentPage, commentDatas]);
 
   return (
     <motion.section
@@ -63,19 +71,30 @@ const CommentSection = ({ datassss }: Props) => {
         <Pagination
           showControls
           total={
-            datassss.length % pageSize === 0
-              ? datassss.length / pageSize
-              : datassss.length / pageSize + 1
+            commentDatas.length % pageSize === 0
+              ? commentDatas.length / pageSize
+              : commentDatas.length / pageSize + 1
           }
           boundaries={1}
           color="secondary"
           page={currentPage}
-          onChange={(e) => {
+          onChange={(e: number) => {
             setCurrentPage(e);
             scrollToSection("CommentSection");
           }}
         />
       </div>
+      <Button
+        onClick={(e: any) => {
+          console.log(datassss.slice(10, 20));
+          dispatch({
+            type: ADD_COMMENT_DATA_SUCCESS,
+            payload: datassss.slice(10, 20),
+          });
+        }}
+      >
+        clickedme
+      </Button>
     </motion.section>
   );
 };

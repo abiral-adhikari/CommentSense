@@ -3,19 +3,27 @@ import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@nextui-org/react";
 import { GithubIcon, GoogleIcon } from "@/components/Icons";
-import PasswordField from "@/components/PasswordField";
-import EmailField from "@/components/EmailField";
 import Link from "next/link";
 import {
   handleGithubSignIn,
   handleGoogleSignIn,
 } from "@/lib/action/LoginFunctionalities";
-import UserNameField from "@/components/UsernameField";
+
 import toast, { Toaster } from "react-hot-toast";
+import {
+  EmailField,
+  PasswordField,
+  UserNameField,
+} from "@/components/TextField";
+import { useDispatch } from "react-redux";
+import {
+  IS_SHOW_ERROR_MODAL,
+  IS_SHOW_SPINNER,
+} from "@/lib/store/Reducer/constant";
 
 export default function Register() {
   const router = useRouter();
-
+  const dispatch = useDispatch();
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -29,6 +37,10 @@ export default function Register() {
   const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    dispatch({
+      type: IS_SHOW_SPINNER,
+      payload: true,
+    });
     try {
       console.log({ email, password, confirmPassword });
       const regex = /^(?=.*\d)(?=.*[a-z]).{8,}$/;
@@ -64,16 +76,28 @@ export default function Register() {
           }
         }
       }
+      dispatch({
+        type: IS_SHOW_SPINNER,
+        payload: false,
+      });
     } catch (error: any) {
       toast.error(error.toString());
       console.log(`Register failed: ${error}`);
+      dispatch({
+        type: IS_SHOW_ERROR_MODAL,
+        payload: {
+          isShow: true,
+          title: "Registration Error",
+          description: error.toString(),
+        },
+      });
     }
 
     setIsLoading(false);
   };
   return (
     <main>
-      <div className="h-screen w-screen items-center justify-center flex bg-cover bg-no-repeat bg-[url('https://img.freepik.com/free-photo/pile-3d-play-button-logos_1379-880.jpg?w=1380&t=st=1698775013~exp=1698775613~hmac=3cf1e4be4c648dc5d68267a53e38725d97a2dfb98497e8791b9188e3732b285f')]">
+      <div className="h-screen items-center justify-center flex  ">
         <div className=" rounded-[16px] max-w-2xl bg-slate-800 border border-slate-400 shadow-lg backdrop-blur-sm bg-opacity-30 p-8 mx-auto">
           <div className="bg-white rounded-t-lg p-8 ">
             <p className="text-center text-sm text-gray-400 font-bold">

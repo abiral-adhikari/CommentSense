@@ -8,6 +8,8 @@ import ReduxProvider from "@/lib/context/ReduxProvider";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
+import { CustomSpinner, ErrorModal, SucessModal } from "@/components/Modals";
+
 config.autoAddCss = false;
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,7 +30,11 @@ export default function RootLayout({
           <AuthProvider>
             <main className="max-w-10xl mx-auto">
               {/* <Navbar /> */}
+
               {children}
+              <CustomSpinner />
+              <SucessModal />
+              <ErrorModal />
               <Toaster />
             </main>
           </AuthProvider>{" "}
