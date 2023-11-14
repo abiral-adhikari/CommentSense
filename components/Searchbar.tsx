@@ -4,7 +4,7 @@ import { scrollToSection } from "@/lib/action/ScrollFunctionalities";
 import React, { FormEvent, useState } from "react";
 import { DropDownButton } from "./DropDown";
 import { useDispatch } from "react-redux";
-import { IS_SHOW_SPINNER } from "@/lib/store/Reducer/constant";
+import { IS_SHOW_SPINNER, YOUTUBE_LINK } from "@/lib/store/Reducer/constant";
 
 const Searchbar = () => {
   const modelOptions = [
@@ -76,13 +76,23 @@ const Searchbar = () => {
 
     const isValidLink = isValidYouTubeURL(searchPrompt);
     if (!isValidLink) {
-      alert("Invalid Link");
+      alert("Invalid Link\nReason: Not a Youtube URL");
+      return;
+    }
+    const videoID = searchPrompt.match(/[?&]v=([^&]+)/);
+    if (!videoID) {
+      alert("Invalid Link \nReason: Missing video ID");
       return;
     }
 
     dispatch({
+      type: YOUTUBE_LINK,
+      payload: videoID ? videoID[1] : "",
+    });
+
+    dispatch({
       type: IS_SHOW_SPINNER,
-      payload: false,
+      payload: true,
     });
 
     // fetchComments(searchPrompt);
@@ -95,8 +105,9 @@ const Searchbar = () => {
     });
     dispatch({
       type: IS_SHOW_SPINNER,
-      payload: true,
+      payload: false,
     });
+
     scrollToSection("CommentSection");
   };
 

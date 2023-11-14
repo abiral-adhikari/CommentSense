@@ -15,12 +15,6 @@ export default async function Home() {
   const value = 0.66;
   const session = await getServerSession(options);
   return (
-    // <div className="p-4  flex flex-row">
-    //   <div className="sm:flex hidden mr-10 relative">
-    //     <Sidebar />
-    //   </div>
-
-    //   <div className="max-w-10xl mx-auto ">
     <>
       <Navbar />
       <section className=" max-xl:flex-col px-6 flex gap-16 md:px-20 py-32">
@@ -47,9 +41,8 @@ export default async function Home() {
         <HeroCarousel />
       </section>
       <Divider className="my-4" />
+
       <CommentSection datassss={datassss} />
     </>
-    //   </div>
-    // </div>
   );
 }

@@ -21,6 +21,8 @@ const CommentSection = ({ datassss }: Props) => {
   if (commentDatas.length === 0) return;
 
   const dispatch = useDispatch();
+  const searchLink = useSelector((state: any) => state.YoutubeLinkReducer);
+  console.log(searchLink);
   const [currentPage, setCurrentPage] = useState(1);
   const [displayedComments, setDisplayedComments] = useState([
     {
@@ -49,10 +51,27 @@ const CommentSection = ({ datassss }: Props) => {
       ref={sectionRef}
       variants={staggerContainer()}
       viewport={{ once: true, amount: 0.25 }}
-      className={`px-6 md:px-20 py-5  items-center `}
+      className={`px-6 md:px-20 py-5 items-center `}
     >
-      <h1 className="head-text mb-8">Comments Analysis</h1>
-      <div className="flex flex-wrap justify-center items-center mx-auto gap-5 ">
+      <h1 className=" mt-4 text-5xl leading-[72px] font-bold tracking-[-1.2px] text-gray-900 mb-8">
+        Video
+      </h1>
+      <div className=" flex-1 aspect-video ">
+        <iframe
+          className="w-full h-full rounded-lg"
+          src={`https://www.youtube.com/embed/${searchLink}`}
+          // width="100%"
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        ></iframe>
+      </div>
+
+      <h1 className=" mt-4 text-5xl leading-[72px] font-bold tracking-[-1.2px] text-gray-900 mb-8">
+        Comments
+      </h1>
+      <div className="flex flex-wrap justify-center items-center mx-auto gap-5  ">
         {displayedComments.map((comment, index) => (
           <CommentCards
             index={index}
@@ -65,7 +84,6 @@ const CommentSection = ({ datassss }: Props) => {
           />
         ))}
       </div>
-
       <Divider className="mt-5" />
       <div className="flex flex-row  mt-5 justify-center">
         <Pagination
@@ -97,6 +115,12 @@ const CommentSection = ({ datassss }: Props) => {
       </Button>
     </motion.section>
   );
+};
+
+import React from "react";
+
+export const VideoSection = () => {
+  return <div>VideoSection</div>;
 };
 
 export default CommentSection;
