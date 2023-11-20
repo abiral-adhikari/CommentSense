@@ -247,7 +247,7 @@ export const ErrorModal = () => {
 
   const dispatch = useDispatch();
   const modalInfos = useSelector((state: any) => state.ModalReducer);
-  console.log(modalInfos.errorModal.isShow);
+  // console.log(modalInfos.errorModal.isShow);
   return (
     <>
       <div

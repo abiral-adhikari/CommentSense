@@ -1,3 +1,4 @@
+// "use client";
 import { getServerSession } from "next-auth";
 import { options } from "./api/auth/[...nextauth]/options";
 import { Divider } from "@nextui-org/react";
@@ -10,6 +11,7 @@ import Navbar from "@/components/Navbar";
 import { datassss } from "@/lib/CommentsData";
 import Sidebar from "@/components/Sidebar";
 import CommentSection from "@/components/CommentSection";
+import { exec } from "child_process";
 // import Sidebar from "@/components/Sidebar";
 export default async function Home() {
   const value = 0.66;

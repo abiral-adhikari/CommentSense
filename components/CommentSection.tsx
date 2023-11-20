@@ -7,22 +7,18 @@ import { motion } from "framer-motion";
 import { staggerContainer } from "@/lib/utils/motion";
 import { scrollToSection } from "@/lib/action/ScrollFunctionalities";
 import { useDispatch, useSelector } from "react-redux";
-import { ADD_COMMENT_DATA_SUCCESS } from "@/lib/store/Reducer/constant";
+// import { ADD_COMMENT_DATA_SUCCESS } from "@/lib/store/Reducer/constant";
 
 const pageSize = 10; // Number of comments to display per page
 type Props = {
   datassss: CommentData[];
 };
 const CommentSection = ({ datassss }: Props) => {
+  const dispatch = useDispatch();
   const commentDatas: CommentData[] = useSelector(
     (state: any) => state.CommentDataReducer
   );
-
-  if (commentDatas.length === 0) return;
-
-  const dispatch = useDispatch();
   const searchLink = useSelector((state: any) => state.YoutubeLinkReducer);
-  console.log(searchLink);
   const [currentPage, setCurrentPage] = useState(1);
   const [displayedComments, setDisplayedComments] = useState([
     {
@@ -43,8 +39,10 @@ const CommentSection = ({ datassss }: Props) => {
       endIndex
     );
     setDisplayedComments(commentsToDisplay);
+    console.log(commentsToDisplay);
+    console.log(displayedComments);
   }, [currentPage, commentDatas]);
-
+  if (!searchLink && commentDatas.length === 0) return;
   return (
     <motion.section
       id="CommentSection"
@@ -102,7 +100,7 @@ const CommentSection = ({ datassss }: Props) => {
           }}
         />
       </div>
-      <Button
+      {/* <Button
         onClick={(e: any) => {
           console.log(datassss.slice(10, 20));
           dispatch({
@@ -112,7 +110,7 @@ const CommentSection = ({ datassss }: Props) => {
         }}
       >
         clickedme
-      </Button>
+      </Button> */}
     </motion.section>
   );
 };

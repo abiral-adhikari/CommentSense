@@ -7000,3 +7000,8 @@ export const datassss = [
     negative_score: 29,
   },
 ];
+
+// "dev": "next dev",
+// "build": "next build",
+// "start": "next start",
+// "lint": "next lint"

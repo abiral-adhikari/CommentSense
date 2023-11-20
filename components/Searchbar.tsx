@@ -3,10 +3,20 @@
 import { scrollToSection } from "@/lib/action/ScrollFunctionalities";
 import React, { FormEvent, useState } from "react";
 import { DropDownButton } from "./DropDown";
-import { useDispatch } from "react-redux";
-import { IS_SHOW_SPINNER, YOUTUBE_LINK } from "@/lib/store/Reducer/constant";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ADD_COMMENT_DATA_SUCCESS,
+  IS_SHOW_SPINNER,
+  RESET_COMMENT_DATA_SUCCESS,
+  YOUTUBE_LINK,
+} from "@/lib/store/Reducer/constant";
+import axios from "axios";
+import { CommentData } from "@/types";
 
 const Searchbar = () => {
+  const commentDatas: CommentData[] = useSelector(
+    (state: any) => state.CommentDataReducer
+  );
   const modelOptions = [
     {
       title: "LSTM",
@@ -49,10 +59,11 @@ const Searchbar = () => {
     },
   ];
   const dispatch = useDispatch();
-  const [searchPrompt, setSetsearchPrompt] = useState("");
+  const [youtubeLink, setYoutubeLink] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [model, setModel] = useState(modelOptions[0].title);
   const [comment, setComment] = useState(commentOptions[0].title);
+  const [translatedText, setTranslatedText] = useState("");
 
   const isValidYouTubeURL = (url: string) => {
     try {
@@ -73,13 +84,16 @@ const Searchbar = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const isValidLink = isValidYouTubeURL(searchPrompt);
+    dispatch({
+      type: RESET_COMMENT_DATA_SUCCESS,
+      payload: [],
+    });
+    const isValidLink = isValidYouTubeURL(youtubeLink);
     if (!isValidLink) {
       alert("Invalid Link\nReason: Not a Youtube URL");
       return;
     }
-    const videoID = searchPrompt.match(/[?&]v=([^&]+)/);
+    const videoID = youtubeLink.match(/[?&]v=([^&]+)/);
     if (!videoID) {
       alert("Invalid Link \nReason: Missing video ID");
       return;
@@ -94,11 +108,32 @@ const Searchbar = () => {
       type: IS_SHOW_SPINNER,
       payload: true,
     });
-
-    // fetchComments(searchPrompt);
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/flask/get_comments_analysis",
+        {
+          params: {
+            youtubeLink: youtubeLink,
+            model,
+            comment,
+          },
+        }
+      );
+      dispatch({
+        type: ADD_COMMENT_DATA_SUCCESS,
+        payload: response.data.comments,
+      });
+      console.log(response.data);
+      console.log(response.data.comments);
+      console.log(commentDatas);
+      let receivedComments = response.data.comments;
+      // console.log(response.data[0].comments);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
 
     console.log({
-      searchPrompt,
+      searchPrompt: youtubeLink,
       model,
       comment,
       commentextracr: comment.match(/\d+/)![0],
@@ -117,13 +152,13 @@ const Searchbar = () => {
         <div className="flex gap-4  flex-wrap">
           <input
             type="text"
-            value={searchPrompt}
-            onChange={(e) => setSetsearchPrompt(e.target.value)}
+            value={youtubeLink}
+            onChange={(e) => setYoutubeLink(e.target.value)}
             placeholder="Enter product Link"
             className="searchbar-input"
           ></input>
           <button
-            disabled={searchPrompt === ""}
+            disabled={youtubeLink === ""}
             type="submit"
             className="searchbar-btn"
           >

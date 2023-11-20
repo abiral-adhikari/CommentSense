@@ -6,6 +6,14 @@
 .pnp.js
 .yarn/install-state.gz
 
+#flask
+/app/api/flask/env/
+**/env/
+/app/api/flask/__pycache__/
+/app/api/flask/sentimentmodel.h5
+app/api/flask/Copy of sentimentmodel.h5
+
+
 # testing
 /coverage
 
@@ -17,7 +25,7 @@
 /build
 
 # misc
-.DS_Store
+.DS_Storegit 
 *.pem
 
 # debug
