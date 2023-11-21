@@ -65,7 +65,6 @@ def get_Comment():
 def get_Comment_Analysis():
     df_predict = pd.DataFrame(columns=['comment',"type" ,'negative_score', 'neutral_score', 'positive_score'])
     try:
-        # video_url = request.args.get('url')
         youtubeLink = request.args.get('youtubeLink')
         video_url = youtubeLink
         # video_url = "https://www.youtube.com/watch?v=HhjHYkPQ8F0"
@@ -78,10 +77,8 @@ def get_Comment_Analysis():
         comments=comments[:100]
         # Check if comments is None
         if comments is None:
-            return jsonify({"error": "Failed to retrieve comments"}), 500
-        # comments=["i love you"]
+            return jsonify({"error": "Failed to retrieve comments"}), 500       
         for comment in comments:
-            # comment="I hadfgfgdfgte you"
             result1 = predict_text(comment)
             result=result1[0]
             type=np.argmax(np.array(result))
