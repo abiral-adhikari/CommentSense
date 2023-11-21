@@ -6,7 +6,7 @@ from keras.preprocessing.text import tokenizer_from_json
 import pickle
 
 # Load Keras model
-lstm = load_model('app/api/flask/Copy of sentimentmodel.h5')
+lstm = load_model('app/api/flask/sentimentmodel.h5')
 # lstm = load_model('Copy of sentimentmodel.h5')
 # lstm = load_model('sentimentmodel.h5')
 

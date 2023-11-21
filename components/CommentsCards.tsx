@@ -27,27 +27,6 @@ const CommentCards = ({
   type,
   index,
 }: Props) => {
-  // const CircularProgressClassNames =
-  //   type == 0
-  //     ? {
-  //         svg: "w-20 h-20 drop-shadow-md",
-  //         indicator: "stroke-red-500",
-  //         track: "stroke-black/20",
-  //         value: "text-lg font-semibold text-red-500",
-  //       }
-  //     : type == 4
-  //     ? {
-  //         svg: "w-20 h-20 drop-shadow-md",
-  //         indicator: "stroke-green-500",
-  //         track: "stroke-black/20",
-  //         value: "text-lg font-semibold text-green-500",
-  //       }
-  //     : {
-  //         svg: "w-20 h-20 drop-shadow-md",
-  //         indicator: "stroke-yellow-500",
-  //         track: "stroke-black/20",
-  //         value: "text-lg font-semibold text-yellow-500",
-  //       };
   const ChipClassNames =
     type == 0
       ? {
@@ -65,10 +44,14 @@ const CommentCards = ({
         };
 
   return (
+    // <motion.div
+    //   initial="hidden"
+    //   whileInView={"show"}
+    //   variants={fadeIn("right", "spring", 0.5, 0.75)}
+    // >
     <motion.div
-      initial="hidden"
-      whileInView={"show"}
-      variants={fadeIn("right", "spring", 0.5, 0.75)}
+      // className="w-full green-pink-gradient p-[1px] rounded-[30px] shadow-card "
+      variants={fadeIn("right", "spring", 0.25 * index, 0.55)}
     >
       <Card
         className={`

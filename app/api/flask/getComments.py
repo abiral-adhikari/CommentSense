@@ -56,7 +56,7 @@ def get_Comment():
             return jsonify({"error": "Video URL is required"}), 400
         
         video_id =YouTube(video_url).video_id
-        comments = getComments(video_id, 1, 10)  
+        comments = getComments(video_id, 0, 1)  
         return jsonify({"comments": comments})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -75,7 +75,7 @@ def get_Comment_Analysis():
 
         video_id = YouTube(video_url).video_id
         comments = getComments(video_id, 0, 1)
-        
+        comments=comments[:100]
         # Check if comments is None
         if comments is None:
             return jsonify({"error": "Failed to retrieve comments"}), 500

@@ -5,11 +5,11 @@ import {
 } from "./constant";
 import { datassss } from "../../CommentsData";
 
-const intialState = datassss.slice(0, 1);
+const intialState = datassss.slice(0, 10);
 // const intialState: never[] = [];
 const CommentDataReducer = (
+  //intialState,
   state = [],
-  //  intialState,
   action: { type: any; payload: any }
 ) => {
   switch (action.type) {
@@ -22,7 +22,7 @@ const CommentDataReducer = (
       const newDatas = [...state, ...action.payload];
       return newDatas;
     case RESET_COMMENT_DATA_SUCCESS:
-      return intialState;
+      return [];
     default:
       return state;
   }

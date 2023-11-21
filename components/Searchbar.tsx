@@ -119,13 +119,14 @@ const Searchbar = () => {
           },
         }
       );
+
+      console.log(response.data);
+      console.log(response.data.comments);
+      console.log(commentDatas);
       dispatch({
         type: ADD_COMMENT_DATA_SUCCESS,
         payload: response.data.comments,
       });
-      console.log(response.data);
-      console.log(response.data.comments);
-      console.log(commentDatas);
       let receivedComments = response.data.comments;
       // console.log(response.data[0].comments);
     } catch (error) {
