@@ -7,12 +7,20 @@ import pickle
 
 # Load Keras model
 lstm = load_model('app/api/flask/sentimentmodel.h5')
-# lstm = load_model('Copy of sentimentmodel.h5')
-# lstm = load_model('sentimentmodel.h5')
+rnn = load_model('app/api/flask/85.59%RNN_Model.h5')
+# rnn = load_model('app/api/flask/rnnmodel.h5')
+
 
 
 tokenizer=Tokenizer()
 with open('app/api/flask/tokenizer.pkl', 'rb') as tokenizer_file:
 # with open('tokenizer.pkl', 'rb') as tokenizer_file:
     tokenizer = pickle.load(tokenizer_file)
+    # tokenizer_RNN= pickle.load(tokenizer_file)
+tokenizer_RNN=Tokenizer()
+with open('app/api/flask/RNNtokenizer.pkl', 'rb') as tokenizer_file:
+# with open('tokenizer.pkl', 'rb') as tokenizer_file:
+    tokenizer_RNN= pickle.load(tokenizer_file)
+    # tokenizer_RNN= pickle.load(tokenizer_file)
+
 

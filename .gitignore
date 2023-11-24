@@ -11,6 +11,8 @@
 **/env/
 /app/api/flask/__pycache__/
 /app/api/flask/sentimentmodel.h5
+/app/api/flask/rnnmodel.h5
+/app/api/flask/Model/
 app/api/flask/Copy of sentimentmodel.h5
 
 
