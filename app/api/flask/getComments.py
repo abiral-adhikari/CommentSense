@@ -18,7 +18,7 @@ from model import lstm,tokenizer,tokenizer_RNN,rnn
 from keras.preprocessing.sequence import pad_sequences
 from preprocessing import clean_LSTM,clean_RNN
 from flask import request,jsonify,Response
-
+from preprocessing import filter_english_comments
 apiKey = os.environ.get("YOUTUBEAPI")
 
 def get_videoid(url):
@@ -53,6 +53,8 @@ def getComments(videoid,pagecountStart,pagecountRange):
             print(pagecount)
         else :
             break
+    commentlist=[filter_english_comments(text) for text in commentlist]
+    commentlist = [comment for comment in commentlist if comment != ""]
     return commentlist
 
 def get_Comment_try ():

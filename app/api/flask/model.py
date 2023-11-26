@@ -18,9 +18,9 @@ with open('app/api/flask/tokenizer.pkl', 'rb') as tokenizer_file:
     tokenizer = pickle.load(tokenizer_file)
     # tokenizer_RNN= pickle.load(tokenizer_file)
 tokenizer_RNN=Tokenizer()
-with open('app/api/flask/RNNtokenizer.pkl', 'rb') as tokenizer_file:
+with open('app/api/flask/RNNtokenizer.pkl', 'rb') as tokenizer_file_RNN:
 # with open('tokenizer.pkl', 'rb') as tokenizer_file:
-    tokenizer_RNN= pickle.load(tokenizer_file)
+    tokenizer_RNN= pickle.load(tokenizer_file_RNN)
     # tokenizer_RNN= pickle.load(tokenizer_file)
 
 

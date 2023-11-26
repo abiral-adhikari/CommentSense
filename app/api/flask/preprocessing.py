@@ -1,8 +1,9 @@
 import re
-from langdetect import detect
+from langdetect import detect,detect_langs
 from nltk.corpus import stopwords
 import nltk
 from nltk.stem import WordNetLemmatizer
+from nltk.stem import PorterStemmer
 nltk.download('stopwords')
 
 # function to completely remove the emojis from the comments using re
@@ -42,8 +43,10 @@ def filter_english_comments(text):
         try:
             # print(sentence)
             # print(detect(sentence))
-            if(detect(sentence)=="en"):
+            if detect(sentence)=="en" and detect_langs(text)[0].prob>=0.6:
                 englishcomments.append(sentence)
+            else:
+                englishcomments.append("")
         except:
             pass
     filteredcomment='.'.join(englishcomments)
@@ -437,7 +440,9 @@ def preprocessing_RNN(text):
     tokens = nltk.word_tokenize(text)
 
     lemmatizer = WordNetLemmatizer()
+    stemmer = PorterStemmer()
     tokens = [lemmatizer.lemmatize(word) for word in tokens]
+    tokens = [stemmer.stem(word) for word in tokens]
     tokens = [contractions[word] if word in contractions else word for word in tokens]
     for i in range(len(tokens)):
         if tokens[i] == 'not' and i < len(tokens) - 1:

@@ -35,16 +35,17 @@ def get_Comment_Analysis_LSTM():
             return jsonify({"error": "Failed to retrieve comments"}), 500       
         for comment in comments:
             text=clean_LSTM(comment)
-            sequence=tokenizer.texts_to_sequences([text])
-            padded_sequences = pad_sequences(sequence,padding='post',maxlen=50)
-            prediction=lstm.predict(padded_sequences)
-            result1=prediction.tolist()
-            result=result1[0]
-            type=np.argmax(np.array(result))
-            type=0 if type==0 else 4 if type==2 else 2
-            new_row = {'comment': comment, "type":type,'negative_score': round(result[0]*100, 2), 'neutral_score': round(result[1]*100, 2), 'positive_score': round(result[2]*100, 2)}
-            
-            df_predict.loc[len(df_predict)] = new_row
+            if comment!="":
+                sequence=tokenizer.texts_to_sequences([text])
+                padded_sequences = pad_sequences(sequence,padding='post',maxlen=50)
+                prediction=lstm.predict(padded_sequences)
+                result1=prediction.tolist()
+                result=result1[0]
+                type=np.argmax(np.array(result))
+                type=0 if type==0 else 4 if type==2 else 2
+                new_row = {'comment': comment, "type":type,'negative_score': round(result[0]*100, 2), 'neutral_score': round(result[1]*100, 2), 'positive_score': round(result[2]*100, 2)}
+                
+                df_predict.loc[len(df_predict)] = new_row
 
         # Convert DataFrame to JSON
         json_result = df_predict.to_json(orient='records')

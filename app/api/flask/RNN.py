@@ -23,19 +23,20 @@ def get_Comment_Analysis_RNN():
         # Check if comments is None
         if comments is None:
             return jsonify({"error": "Failed to retrieve comments"}), 500
-        comments = [clean_RNN(comment) for comment in comments]
-        comments=[item for item in comments if item != ""]
         for comment in comments:
-            sequence=tokenizer_RNN.texts_to_sequences([comment])
-            padded_sequences = pad_sequences(sequence,maxlen=100)
-            prediction=rnn.predict(padded_sequences)
-            prediction=prediction.tolist()
-            result=prediction[0]
-            type=np.argmax(np.array(result))
-            type=0 if type==0 else 4 if type==2 else 2
-            new_row = {'comment': comment, "type":type,'negative_score': round(result[0]*100, 2), 'neutral_score': round(result[1]*100, 2), 'positive_score': round(result[2]*100, 2)}
-            
-            df_predict.loc[len(df_predict)] = new_row
+            initComment=comment
+            comment=clean_RNN(comment)
+            if comment!="" or comment!=".":
+                sequence=tokenizer_RNN.texts_to_sequences([comment])
+                padded_sequences = pad_sequences(sequence,maxlen=100)
+                prediction=rnn.predict(padded_sequences)
+                prediction=prediction.tolist()
+                result=prediction[0]
+                type=np.argmax(np.array(result))
+                type=0 if type==0 else 4 if type==2 else 2
+                new_row = {'comment': initComment, "type":type,'negative_score': round(result[0]*100, 2), 'neutral_score': round(result[1]*100, 2), 'positive_score': round(result[2]*100, 2)}
+                
+                df_predict.loc[len(df_predict)] = new_row
 
         # # Convert DataFrame to JSON
         json_result = df_predict.to_json(orient='records')
