@@ -10,14 +10,14 @@ from getComments import getComments,getCertainComments
 import re
 from keras.models import Model
 from keras.preprocessing.text import Tokenizer
-from model import lstm,tokenizer,tokenizer_RNN,rnn
+from model import lstm,tokenizer,tokenizer_RNN,gru
 from keras.preprocessing.sequence import pad_sequences
 from preprocessing import clean_LSTM,clean_RNN
 from flask import request,jsonify,Response
 import json
 from getComments import commentlist
 
-def get_Comment_Analysis_LSTM():
+def get_Comment_Analysis_GRU():
     df_predict = pd.DataFrame(columns=['comment',"type" ,'negative_score', 'neutral_score', 'positive_score'])
     
     try:
@@ -45,7 +45,7 @@ def get_Comment_Analysis_LSTM():
             if comment!="":
                 sequence=tokenizer.texts_to_sequences([text])
                 padded_sequences = pad_sequences(sequence,padding='post',maxlen=50)
-                prediction=lstm.predict(padded_sequences)
+                prediction=gru.predict(padded_sequences)
                 result1=prediction.tolist()
                 result=result1[0]
                 type=np.argmax(np.array(result))
@@ -62,7 +62,7 @@ def get_Comment_Analysis_LSTM():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-def get_Comment_Analysis_pagination_LSTM(page_number):
+def get_Comment_Analysis_pagination_GRU(page_number):
     df_predict = pd.DataFrame(columns=['comment',"type" ,'negative_score', 'neutral_score', 'positive_score'])
     try:
         if page_number=="1":
@@ -83,13 +83,13 @@ def get_Comment_Analysis_pagination_LSTM(page_number):
             
         page_number=int(page_number) 
         comments=getCertainComments(page_number) 
-        print("get_Comment_Analysis_pagination_LSTM \t"+str(len(comments)))        
+        print("get_Comment_Analysis_pagination_GRU \t"+str(len(comments)))        
         for comment in comments:
             text=clean_LSTM(comment)
             if comment!="":
                 sequence=tokenizer.texts_to_sequences([text])
                 padded_sequences = pad_sequences(sequence,padding='post',maxlen=50)
-                prediction=lstm.predict(padded_sequences)
+                prediction=gru.predict(padded_sequences)
                 result1=prediction.tolist()
                 result=result1[0]
                 type=np.argmax(np.array(result))
@@ -106,20 +106,20 @@ def get_Comment_Analysis_pagination_LSTM(page_number):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-def get_Comment_Analysis_pagination_part_2_LSTM(page_number):
+def get_Comment_Analysis_pagination_part_2_GRU(page_number):
     df_predict = pd.DataFrame(columns=['comment',"type" ,'negative_score', 'neutral_score', 'positive_score'])
     try:
         page_number=int(page_number) 
         comments=getCertainComments(page_number)     # Check if comments is None
         if comments is None:
             return jsonify({"error": "Failed to retrieve comments"}), 500
-        print("get_Comment_Analysis_pagination_LSTM \t"+str(len(comments)))        
+        print("get_Comment_Analysis_pagination_GRU \t"+str(len(comments)))        
         for comment in comments:
             text=clean_LSTM(comment)
             if comment!="":
                 sequence=tokenizer.texts_to_sequences([text])
                 padded_sequences = pad_sequences(sequence,padding='post',maxlen=50)
-                prediction=lstm.predict(padded_sequences)
+                prediction=gru.predict(padded_sequences)
                 result1=prediction.tolist()
                 result=result1[0]
                 type=np.argmax(np.array(result))

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { Pagination, Button, Divider } from "@nextui-org/react";
-import { CommentData } from "@/types";
+import { CommentData, CommentDataPaginationState, SearchPrompt } from "@/types";
 import CommentCards from "./CommentsCards";
 import { motion } from "framer-motion";
 import { staggerContainer } from "@/lib/utils/motion";
@@ -18,6 +18,13 @@ const CommentSection = ({ datassss }: Props) => {
   const commentDatas: CommentData[] = useSelector(
     (state: any) => state.CommentDataReducer
   );
+  const searchPrompt: SearchPrompt = useSelector(
+    (state: any) => state.SearchPromptReducer
+  );
+  const commentDataPagination: CommentDataPaginationState = useSelector(
+    (state: any) => state.CommentDataPaginationReducer
+  );
+  console.log(commentDataPagination);
   const searchLink = useSelector((state: any) => state.YoutubeLinkReducer);
   const [currentPage, setCurrentPage] = useState(1);
   const [displayedComments, setDisplayedComments] = useState([
@@ -34,18 +41,24 @@ const CommentSection = ({ datassss }: Props) => {
   useEffect(() => {
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const commentsToDisplay: CommentData[] = commentDatas.slice(
-      startIndex,
-      endIndex
-    );
-    setDisplayedComments(commentsToDisplay);
-    console.log(commentsToDisplay);
+    // const commentsToDisplay: CommentData[] = commentDatas.slice(
+    //   startIndex,
+    //   endIndex
+    // )// setDisplayedComments(commentsToDisplay);
+    if (commentDataPagination[currentPage] != undefined) {
+      const commentsToDisplay: CommentData[] =
+        commentDataPagination[currentPage];
+
+      setDisplayedComments(commentDataPagination[currentPage]);
+      console.log(commentsToDisplay);
+    }
+
     console.log(displayedComments);
-  }, [currentPage, commentDatas]);
+  }, [currentPage, commentDatas, commentDataPagination]);
   if (!searchLink && commentDatas.length === 0) return;
   return (
     <>
-      <section>
+      <section id="VideoSection">
         <h1 className=" mt-4 text-5xl leading-[72px] font-bold tracking-[-1.2px] text-gray-900 mb-8">
           Video
         </h1>
@@ -91,10 +104,13 @@ const CommentSection = ({ datassss }: Props) => {
           <Pagination
             showControls
             total={
-              4
+              // 4
               // commentDatas.length % pageSize === 0
               //   ? commentDatas.length / pageSize
               //   : Math.ceil(commentDatas.length / pageSize)
+              searchPrompt.comment % pageSize === 0
+                ? searchPrompt.comment / pageSize
+                : Math.ceil(searchPrompt.comment / pageSize)
             }
             boundaries={1}
             color="secondary"
@@ -105,32 +121,38 @@ const CommentSection = ({ datassss }: Props) => {
                 type: IS_SHOW_SPINNER,
                 payload: true,
               });
-              try {
-                const response = await axios.get(
-                  "http://localhost:3000/api/flask/get_comments_analysis",
-                  {
-                    params: {
-                      youtubeLink:
-                        "https://www.youtube.com/watch?v=xPwkrbGkjX8&list=RDMM09R8_2nJtjg&index=3",
-                      model: "LSTM",
-                      comment: "100",
-                      pageNumber: currentPage.toString(),
-                    },
-                  }
-                );
+              if (!(e in commentDataPagination)) {
+                try {
+                  const response = await axios.get(
+                    "http://localhost:3000/api/flask/get_comments_analysis_pagination",
+                    {
+                      params: {
+                        pageNumber: e.toString(),
+                      },
+                    }
+                  );
+                  await dispatch({
+                    type: ADD_COMMENT_DATA_PAGINATION,
+                    payload: { key: e, value: response.data.comments },
+                  });
 
-                console.log(response.data);
-                console.log(response.data.comments);
-                console.log(commentDatas);
-                await dispatch({
-                  type: ADD_COMMENT_DATA_SUCCESS,
-                  payload: response.data.comments,
-                });
-                let receivedComments = response.data.comments;
-                // console.log(response.data[0].comments);
-              } catch (error) {
-                console.error("Error fetching data:", error);
+                  console.log(response.data);
+                  console.log(response.data.comments);
+                  console.log(commentDatas);
+                  await dispatch({
+                    type: ADD_COMMENT_DATA_SUCCESS,
+                    payload: response.data.comments,
+                  });
+                  let receivedComments = response.data.comments;
+                  // console.log(response.data[0].comments);
+                } catch (error) {
+                  console.error("Error fetching data:", error);
+                }
               }
+              dispatch({
+                type: IS_SHOW_SPINNER,
+                payload: false,
+              });
               scrollToSection("CommentSection");
             }}
           />
@@ -153,6 +175,7 @@ const CommentSection = ({ datassss }: Props) => {
 
 import React from "react";
 import {
+  ADD_COMMENT_DATA_PAGINATION,
   ADD_COMMENT_DATA_SUCCESS,
   IS_SHOW_SPINNER,
   RESET_COMMENT_DATA_SUCCESS,

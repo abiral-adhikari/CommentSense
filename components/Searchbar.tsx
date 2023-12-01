@@ -5,9 +5,12 @@ import React, { FormEvent, useState } from "react";
 import { DropDownButton } from "./DropDown";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  ADD_COMMENT_DATA_PAGINATION,
   ADD_COMMENT_DATA_SUCCESS,
   IS_SHOW_SPINNER,
+  RESET_COMMENT_DATA_PAGINATION,
   RESET_COMMENT_DATA_SUCCESS,
+  SEARCH_PROMPT_EDIT,
   YOUTUBE_LINK,
 } from "@/lib/store/Reducer/constant";
 import axios from "axios";
@@ -84,10 +87,28 @@ const Searchbar = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    var match = comment.match(/\d+/);
+    var commentCount = 100;
+    // Check if a match is found
+    if (match) {
+      // Convert the matched string to a number
+      var commentCount = parseInt(match[0], 10);
+
+      // Log the result
+      console.log(commentCount);
+    } else {
+      // Handle the case where no number is found
+      console.log("No number found in the input string");
+    }
     dispatch({
       type: RESET_COMMENT_DATA_SUCCESS,
       payload: [],
     });
+    dispatch({
+      type: RESET_COMMENT_DATA_PAGINATION,
+      payload: [],
+    });
+
     const isValidLink = isValidYouTubeURL(youtubeLink);
     if (!isValidLink) {
       alert("Invalid Link\nReason: Not a Youtube URL");
@@ -120,13 +141,25 @@ const Searchbar = () => {
           },
         }
       );
-
+      dispatch({
+        type: SEARCH_PROMPT_EDIT,
+        payload: {
+          youtubeLink: youtubeLink,
+          model,
+          comment: commentCount,
+          pageNumber: "1",
+        },
+      });
       console.log(response.data);
       console.log(response.data.comments);
       console.log(commentDatas);
       await dispatch({
         type: ADD_COMMENT_DATA_SUCCESS,
         payload: response.data.comments,
+      });
+      await dispatch({
+        type: ADD_COMMENT_DATA_PAGINATION,
+        payload: { key: 1, value: response.data.comments },
       });
       let receivedComments = response.data.comments;
       // console.log(response.data[0].comments);

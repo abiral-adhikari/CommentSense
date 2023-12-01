@@ -1,16 +1,18 @@
 from flask import Flask,request,jsonify,Response
 from getComments import get_Comment_try
-from LSTM import get_Comment_Analysis_LSTM,get_Comment_Analysis_pagination_LSTM
+from LSTM import get_Comment_Analysis_LSTM,get_Comment_Analysis_pagination_LSTM,get_Comment_Analysis_pagination_part_2_LSTM
+from GRU import get_Comment_Analysis_GRU,get_Comment_Analysis_pagination_GRU,get_Comment_Analysis_pagination_part_2_GRU
 import numpy as np
 from predict import predict_text_LSTM,predict_text_endpoint
 from test import data
-from RNN import get_Comment_Analysis_RNN
+from RNN import get_Comment_Analysis_RNN,get_Comment_Analysis_pagination_RNN
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app) 
 # Global variable to store data
-commentlist = []
+
+model="LSTM"
 @app.route("/test",methods=['GET'])
 def test_endpoint():
     youtubeLink = request.args.get('youtubeLink')
@@ -30,14 +32,28 @@ def get_comments():
 
 @app.route('/get_comments_analysis', methods=['GET'])
 def get_comments_Analysis():
+    global model
     model = request.args.get('model')
     pageNumber = request.args.get('pageNumber')
     print(model)
-    return get_Comment_Analysis_pagination_LSTM(pageNumber)
+    # return get_Comment_Analysis_pagination_LSTM(pageNumber)
     if(model=="LSTM"):
         return get_Comment_Analysis_LSTM()
     else:
-        return get_Comment_Analysis_RNN()
+        if(model=="RNN"):
+            return get_Comment_Analysis_RNN()
+        else:
+            return get_Comment_Analysis_GRU()
+@app.route('/get_comments_analysis_pagination', methods=['GET'])
+def get_comments_Analysis_pagination():
+    pageNumber = request.args.get('pageNumber')
+    if(model=="LSTM"):
+        return get_Comment_Analysis_pagination_part_2_LSTM(pageNumber)
+    else:
+        if(model=="RNN"):
+            return get_Comment_Analysis_pagination_RNN(pageNumber)
+        else:
+            return get_Comment_Analysis_pagination_part_2_GRU(pageNumber)
 
     # return get_Comment_Analysis()
 # @app.route('/get_comments_analysisss', methods=['GET'])

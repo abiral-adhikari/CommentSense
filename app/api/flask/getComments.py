@@ -50,9 +50,7 @@ def getComments(videoid,pagecountStart,pagecountRange,commentsCount=100):
             print(pagecount)
         else :
             break
-    print("commentlenght "+str(len(commentlist)))
-    # commentlist=[filter_english_comments(text) for text in commentlist]
-    # commentlist = [comment for comment in commentlist if comment != ""]
+    print("getComments \t "+str(len(commentlist)))
     return commentlist
 
 

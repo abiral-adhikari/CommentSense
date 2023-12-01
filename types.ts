@@ -33,3 +33,13 @@ export interface CommentData {
   negative_score: number;
   neutral_score: number;
 }
+export interface SearchPrompt {
+  youtubeLink: string;
+  model: string;
+  comment: number;
+  pageNumber: string;
+}
+
+export interface CommentDataPaginationState {
+  [key: number]: CommentData[]; // You might want to replace 'any' with a more specific type
+}
