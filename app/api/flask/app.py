@@ -1,6 +1,6 @@
 from flask import Flask,request,jsonify,Response
 from getComments import get_Comment_try
-from LSTM import get_Comment_Analysis_LSTM
+from LSTM import get_Comment_Analysis_LSTM,get_Comment_Analysis_pagination_LSTM
 import numpy as np
 from predict import predict_text_LSTM,predict_text_endpoint
 from test import data
@@ -9,16 +9,18 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app) 
-
+# Global variable to store data
+commentlist = []
 @app.route("/test",methods=['GET'])
 def test_endpoint():
     youtubeLink = request.args.get('youtubeLink')
     comment = request.args.get('comment')
     model = request.args.get('model')
-    
+    pageNumber = request.args.get('pageNumber')
     return jsonify({'youtubeLink': youtubeLink,
                     "comment": comment,
                     "model": model,
+                    "pageNumber":pageNumber,
                     "data":data})
     # return data
     
@@ -29,7 +31,9 @@ def get_comments():
 @app.route('/get_comments_analysis', methods=['GET'])
 def get_comments_Analysis():
     model = request.args.get('model')
+    pageNumber = request.args.get('pageNumber')
     print(model)
+    return get_Comment_Analysis_pagination_LSTM(pageNumber)
     if(model=="LSTM"):
         return get_Comment_Analysis_LSTM()
     else:

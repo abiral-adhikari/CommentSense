@@ -43,7 +43,7 @@ def filter_english_comments(text):
         try:
             # print(sentence)
             # print(detect(sentence))
-            if detect(sentence)=="en" and detect_langs(text)[0].prob>=0.6:
+            if detect(sentence)=="en" and detect_langs(text)[0].prob>=0.7:
                 englishcomments.append(sentence)
             else:
                 englishcomments.append("")
@@ -455,7 +455,7 @@ def clean_LSTM(text):
     sent=removeemoji(text)
     sent=filter_english_comments(sent)
     sent=preprocessing(text)
-    print(sent)
+    # print(sent)
     return sent
 def clean_RNN(text):
     sent=removeemoji(text)

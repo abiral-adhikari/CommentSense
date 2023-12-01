@@ -91,15 +91,46 @@ const CommentSection = ({ datassss }: Props) => {
           <Pagination
             showControls
             total={
-              commentDatas.length % pageSize === 0
-                ? commentDatas.length / pageSize
-                : Math.ceil(commentDatas.length / pageSize)
+              4
+              // commentDatas.length % pageSize === 0
+              //   ? commentDatas.length / pageSize
+              //   : Math.ceil(commentDatas.length / pageSize)
             }
             boundaries={1}
             color="secondary"
             page={currentPage}
-            onChange={(e: number) => {
+            onChange={async (e: number) => {
               setCurrentPage(e);
+              dispatch({
+                type: IS_SHOW_SPINNER,
+                payload: true,
+              });
+              try {
+                const response = await axios.get(
+                  "http://localhost:3000/api/flask/get_comments_analysis",
+                  {
+                    params: {
+                      youtubeLink:
+                        "https://www.youtube.com/watch?v=xPwkrbGkjX8&list=RDMM09R8_2nJtjg&index=3",
+                      model: "LSTM",
+                      comment: "100",
+                      pageNumber: currentPage.toString(),
+                    },
+                  }
+                );
+
+                console.log(response.data);
+                console.log(response.data.comments);
+                console.log(commentDatas);
+                await dispatch({
+                  type: ADD_COMMENT_DATA_SUCCESS,
+                  payload: response.data.comments,
+                });
+                let receivedComments = response.data.comments;
+                // console.log(response.data[0].comments);
+              } catch (error) {
+                console.error("Error fetching data:", error);
+              }
               scrollToSection("CommentSection");
             }}
           />
@@ -121,6 +152,12 @@ const CommentSection = ({ datassss }: Props) => {
 };
 
 import React from "react";
+import {
+  ADD_COMMENT_DATA_SUCCESS,
+  IS_SHOW_SPINNER,
+  RESET_COMMENT_DATA_SUCCESS,
+} from "@/lib/store/Reducer/constant";
+import axios from "axios";
 
 export const VideoSection = () => {
   return <div>VideoSection</div>;

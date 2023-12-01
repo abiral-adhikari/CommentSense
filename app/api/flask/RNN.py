@@ -5,6 +5,7 @@ from getComments import getComments
 from flask import jsonify
 import pandas as pd
 import numpy as np
+import re
 from model import tokenizer_RNN,rnn
 from keras.preprocessing.sequence import pad_sequences
 from flask import request,jsonify
@@ -13,12 +14,15 @@ def get_Comment_Analysis_RNN():
     df_predict = pd.DataFrame(columns=['comment',"type" ,'negative_score', 'neutral_score', 'positive_score'])
     try:
         youtubeLink = request.args.get('youtubeLink')
+        comment = request.args.get('comment')
+        match = re.search(r'\d+', comment)  
+        commentCount = 100 if not match else int(match.group())
         video_url = youtubeLink
         if not video_url:
             return jsonify({"error": "Video URL is required"}), 400
 
         video_id = YouTube(video_url).video_id
-        comments = getComments(video_id, 0, 1)
+        comments = getComments(video_id, 0, 1,commentsCount=commentCount)
         comments=comments[:100]
         # Check if comments is None
         if comments is None:

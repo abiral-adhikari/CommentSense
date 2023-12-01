@@ -1,17 +1,9 @@
-import json
 from flask import jsonify, request
 from pytube import YouTube
-import os
 from flask import jsonify
 from googleapiclient.discovery import build
 from predict import predict_text_RNN,predict_text_LSTM
-import pandas as pd
-import numpy as np
-import requests
 from test import data
-
-
-
 from keras.models import Model
 from keras.preprocessing.text import Tokenizer
 from model import lstm,tokenizer,tokenizer_RNN,rnn
@@ -19,8 +11,8 @@ from keras.preprocessing.sequence import pad_sequences
 from preprocessing import clean_LSTM,clean_RNN
 from flask import request,jsonify,Response
 from preprocessing import filter_english_comments
-apiKey = os.environ.get("YOUTUBEAPI")
-
+from apis import YOUTUBEAPI
+import re
 def get_videoid(url):
     try:
         ytobject = YouTube(url)
@@ -30,9 +22,10 @@ def get_videoid(url):
         print(f"Error: {str(e)}")
 
               
-youtube=build("youtube","v3",developerKey="AIzaSyCT7XGku7WgM36gSkAdIqaEKnyIxT4GqJo")
-
-def getComments(videoid,pagecountStart,pagecountRange):
+youtube=build("youtube","v3",developerKey=YOUTUBEAPI)
+commentlist=[]
+def getComments(videoid,pagecountStart,pagecountRange,commentsCount=100):
+    global commentlist
     commentlist=[]
     pagetoken=None
     pagecount=pagecountStart
@@ -46,16 +39,28 @@ def getComments(videoid,pagecountStart,pagecountRange):
         )
         result=comment_request.execute()
         for item in result['items']:
-            commentlist.append(item['snippet']['topLevelComment']['snippet']['textDisplay'])
-        if 'nextPageToken' in result and pagecount<(pagecountStart+pagecountRange):
+            newComment=item['snippet']['topLevelComment']['snippet']['textDisplay'];
+            newComment=filter_english_comments(newComment)
+            if(newComment!="" and newComment!="."):
+                commentlist.append(item['snippet']['topLevelComment']['snippet']['textDisplay'])
+        # if 'nextPageToken' in result and pagecount<(pagecountStart+pagecountRange):
+        if 'nextPageToken' in result and len(commentlist)<commentsCount:
             pagetoken=result['nextPageToken']
             pagecount+=1
             print(pagecount)
         else :
             break
-    commentlist=[filter_english_comments(text) for text in commentlist]
-    commentlist = [comment for comment in commentlist if comment != ""]
+    print("commentlenght "+str(len(commentlist)))
+    # commentlist=[filter_english_comments(text) for text in commentlist]
+    # commentlist = [comment for comment in commentlist if comment != ""]
     return commentlist
+
+
+def getCertainComments(page_number):
+    global commentlist
+    print("getCertainComments LSTM"+str(len(commentlist)))
+    return commentlist[(page_number-1)*10:page_number*10]  
+    
 
 def get_Comment_try ():
     try:
