@@ -18,6 +18,10 @@ app/api/flask/Copy of sentimentmodel.h5
 app/api/flask/GRU_sentimentmodel.h5
 
 
+#roberta
+/cardiffnlp/
+
+
 # testing
 /coverage
 

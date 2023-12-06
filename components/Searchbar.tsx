@@ -22,6 +22,10 @@ const Searchbar = () => {
   );
   const modelOptions = [
     {
+      title: "Roberta",
+      description: "Accuracy :95%",
+    },
+    {
       title: "LSTM",
       description: "Accuracy :90%",
     },
