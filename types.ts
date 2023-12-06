@@ -43,3 +43,11 @@ export interface SearchPrompt {
 export interface CommentDataPaginationState {
   [key: number]: CommentData[]; // You might want to replace 'any' with a more specific type
 }
+
+export type User =
+  | {
+      name?: string | null | undefined;
+      email?: string | null | undefined;
+      image?: string | null | undefined;
+    }
+  | undefined;

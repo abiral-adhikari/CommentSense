@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
-
+import ProfileDropDown from "@/components/ProfileDropDown";
 const navIcons = [
   { src: "/assets/icons/search.svg", alt: "Search" },
   { src: "/assets/icons/black-heart.svg", alt: "Heart" },
@@ -46,6 +46,7 @@ const Navbar = () => {
             height={27}
             className="object-contain"
           />
+          <ProfileDropDown />
         </div>
       </nav>
     </header>
