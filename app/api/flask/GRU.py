@@ -6,24 +6,26 @@ from googleapiclient.discovery import build
 import pandas as pd
 import numpy as np
 from test import data
-from getComments import getComments,getCertainComments
+from getComments import getComments, getCertainComments
 import re
 from keras.models import Model
 from keras.preprocessing.text import Tokenizer
-from model import lstm,tokenizer,tokenizer_RNN,gru
+from model import lstm, tokenizer, tokenizer_RNN, gru
 from keras.preprocessing.sequence import pad_sequences
-from preprocessing import clean_LSTM,clean_RNN
-from flask import request,jsonify,Response
+from preprocessing import clean_LSTM, clean_RNN
+from flask import request, jsonify, Response
 import json
 from getComments import commentlist
 
+
 def get_Comment_Analysis_GRU():
-    df_predict = pd.DataFrame(columns=['comment',"type" ,'negative_score', 'neutral_score', 'positive_score'])
-    
+    df_predict = pd.DataFrame(
+        columns=['comment', "type", 'negative_score', 'neutral_score', 'positive_score'])
+
     try:
         youtubeLink = request.args.get('youtubeLink')
         comment = request.args.get('comment')
-        match = re.search(r'\d+', comment)  
+        match = re.search(r'\d+', comment)
         commentCount = 100 if not match else int(match.group())
         if match:
             commentCount = int(match.group())
@@ -35,25 +37,28 @@ def get_Comment_Analysis_GRU():
             return jsonify({"error": "Video URL is required"}), 400
 
         video_id = YouTube(video_url).video_id
-        comments = getComments(video_id, 0, 1,commentCount)
+        comments = getComments(video_id, 0, 1, commentCount)
         # Check if comments is None
         if comments is None:
-            return jsonify({"error": "Failed to retrieve comments"}), 500       
+            return jsonify({"error": "Failed to retrieve comments"}), 500
         comments = comments[:10]
         for comment in comments:
-            text=clean_LSTM(comment)
-            if comment!="":
-                sequence=tokenizer.texts_to_sequences([text])
-                padded_sequences = pad_sequences(sequence,padding='post',maxlen=50)
-                prediction=gru.predict(padded_sequences)
-                result1=prediction.tolist()
-                result=result1[0]
-                type=np.argmax(np.array(result))
-                type=0 if type==0 else 4 if type==2 else 2
-                new_row = {'comment': comment, "type":type,'negative_score': round(result[0]*100, 2), 'neutral_score': round(result[1]*100, 2), 'positive_score': round(result[2]*100, 2)}
-                
+            initComment = comment
+            comment = clean_RNN(comment)
+            if comment and comment != "" and comment != ".":
+                sequence = tokenizer.texts_to_sequences([comment])
+                padded_sequences = pad_sequences(
+                    sequence, padding='post', maxlen=50)
+                prediction = gru.predict(padded_sequences)
+                result1 = prediction.tolist()
+                result = result1[0]
+                type = np.argmax(np.array(result))
+                type = 0 if type == 0 else 4 if type == 2 else 2
+                new_row = {'comment': initComment, "type": type, 'negative_score': round(
+                    result[0]*100, 2), 'neutral_score': round(result[1]*100, 2), 'positive_score': round(result[2]*100, 2)}
+
                 df_predict.loc[len(df_predict)] = new_row
-        
+
         # Convert DataFrame to JSON
         json_result = df_predict.to_json(orient='records')
 
@@ -61,41 +66,46 @@ def get_Comment_Analysis_GRU():
         return jsonify({"comments": json.loads(json_result)})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
 def get_Comment_Analysis_pagination_GRU(page_number):
-    df_predict = pd.DataFrame(columns=['comment',"type" ,'negative_score', 'neutral_score', 'positive_score'])
+    df_predict = pd.DataFrame(
+        columns=['comment', "type", 'negative_score', 'neutral_score', 'positive_score'])
     try:
-        if page_number=="1":
+        if page_number == "1":
             youtubeLink = request.args.get('youtubeLink')
             comment = request.args.get('comment')
             match = re.search(r'\d+', comment)
             commentCount = 100 if not match else int(match.group())
-            
+
             video_url = youtubeLink
             if not video_url:
                 return jsonify({"error": "Video URL is required"}), 400
 
             video_id = YouTube(video_url).video_id
-            comments = getComments(video_id, 0, 1,commentCount)
+            comments = getComments(video_id, 0, 1, commentCount)
             # Check if comments is None
             if comments is None:
                 return jsonify({"error": "Failed to retrieve comments"}), 500
-            
-        page_number=int(page_number) 
-        comments=getCertainComments(page_number) 
-        print("get_Comment_Analysis_pagination_GRU \t"+str(len(comments)))        
+
+        page_number = int(page_number)
+        comments = getCertainComments(page_number)
+        print("get_Comment_Analysis_pagination_GRU \t"+str(len(comments)))
         for comment in comments:
-            text=clean_LSTM(comment)
-            if comment!="":
-                sequence=tokenizer.texts_to_sequences([text])
-                padded_sequences = pad_sequences(sequence,padding='post',maxlen=50)
-                prediction=gru.predict(padded_sequences)
-                result1=prediction.tolist()
-                result=result1[0]
-                type=np.argmax(np.array(result))
-                type=0 if type==0 else 4 if type==2 else 2
-                new_row = {'comment': comment, "type":type,'negative_score': round(result[0]*100, 2), 'neutral_score': round(result[1]*100, 2), 'positive_score': round(result[2]*100, 2)}
-                
+            initComment = comment
+            comment = clean_RNN(comment)
+            if comment and comment != "" and comment != ".":
+                sequence = tokenizer.texts_to_sequences([comment])
+                padded_sequences = pad_sequences(
+                    sequence, padding='post', maxlen=50)
+                prediction = gru.predict(padded_sequences)
+                result1 = prediction.tolist()
+                result = result1[0]
+                type = np.argmax(np.array(result))
+                type = 0 if type == 0 else 4 if type == 2 else 2
+                new_row = {'comment': initComment, "type": type, 'negative_score': round(
+                    result[0]*100, 2), 'neutral_score': round(result[1]*100, 2), 'positive_score': round(result[2]*100, 2)}
+
                 df_predict.loc[len(df_predict)] = new_row
 
         # Convert DataFrame to JSON
@@ -105,27 +115,33 @@ def get_Comment_Analysis_pagination_GRU(page_number):
         return jsonify({"comments": json.loads(json_result)})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
 def get_Comment_Analysis_pagination_part_2_GRU(page_number):
-    df_predict = pd.DataFrame(columns=['comment',"type" ,'negative_score', 'neutral_score', 'positive_score'])
+    df_predict = pd.DataFrame(
+        columns=['comment', "type", 'negative_score', 'neutral_score', 'positive_score'])
     try:
-        page_number=int(page_number) 
-        comments=getCertainComments(page_number)     # Check if comments is None
+        page_number = int(page_number)
+        # Check if comments is None
+        comments = getCertainComments(page_number)
         if comments is None:
             return jsonify({"error": "Failed to retrieve comments"}), 500
-        print("get_Comment_Analysis_pagination_GRU \t"+str(len(comments)))        
+        print("get_Comment_Analysis_pagination_GRU \t"+str(len(comments)))
         for comment in comments:
-            text=clean_LSTM(comment)
-            if comment!="":
-                sequence=tokenizer.texts_to_sequences([text])
-                padded_sequences = pad_sequences(sequence,padding='post',maxlen=50)
-                prediction=gru.predict(padded_sequences)
-                result1=prediction.tolist()
-                result=result1[0]
-                type=np.argmax(np.array(result))
-                type=0 if type==0 else 4 if type==2 else 2
-                new_row = {'comment': comment, "type":type,'negative_score': round(result[0]*100, 2), 'neutral_score': round(result[1]*100, 2), 'positive_score': round(result[2]*100, 2)}
-                
+            initComment = comment
+            comment = clean_RNN(comment)
+            if comment and comment != "" and comment != ".":
+                sequence = tokenizer.texts_to_sequences([comment])
+                padded_sequences = pad_sequences(
+                    sequence, padding='post', maxlen=50)
+                prediction = gru.predict(padded_sequences)
+                result1 = prediction.tolist()
+                result = result1[0]
+                type = np.argmax(np.array(result))
+                type = 0 if type == 0 else 4 if type == 2 else 2
+                new_row = {'comment': initComment, "type": type, 'negative_score': round(
+                    result[0]*100, 2), 'neutral_score': round(result[1]*100, 2), 'positive_score': round(result[2]*100, 2)}
+
                 df_predict.loc[len(df_predict)] = new_row
 
         # Convert DataFrame to JSON
@@ -135,4 +151,3 @@ def get_Comment_Analysis_pagination_part_2_GRU(page_number):
         return jsonify({"comments": json.loads(json_result)})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    

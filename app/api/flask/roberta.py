@@ -61,9 +61,10 @@ def get_Comment_Analysis_Rob():
             return jsonify({"error": "Failed to retrieve comments"}), 500
         comments = comments[:10]
         for comment in comments:
-            text = preprocess(comment)
-            if comment != "" or comment != ".":
-                encoded_input = tokenizer(text, return_tensors='tf')
+            initComment = comment
+            comment = preprocess(comment)
+            if comment and comment != "" and comment != ".":
+                encoded_input = tokenizer(comment, return_tensors='tf')
                 output = model(encoded_input)
                 scores = output[0][0].numpy()
                 scores = softmax(scores)
@@ -76,7 +77,7 @@ def get_Comment_Analysis_Rob():
                 #     l = labels[ranking[i]]
                 #     s = scores[ranking[i]]
                 #     print(f"{i+1}) {l} {np.round(float(s), 4)}")
-                new_row = {'comment': comment, "type": type, 'negative_score': round(
+                new_row = {'comment': initComment, "type": type, 'negative_score': round(
                     scores[0]*100, 2), 'neutral_score': round(scores[1]*100, 2), 'positive_score': round(scores[2]*100, 2)}
 
                 df_predict.loc[len(df_predict)] = new_row
@@ -110,7 +111,7 @@ def get_Comment_Analysis_pagination_Rob(page_number):
                 scores = softmax(scores)
                 type = np.argmax(np.array(scores))
                 type = 0 if type == 0 else 4 if type == 2 else 2
-                new_row = {'comment': comment, "type": type, 'negative_score': round(
+                new_row = {'comment': initComment, "type": type, 'negative_score': round(
                     scores[0]*100, 2), 'neutral_score': round(scores[1]*100, 2), 'positive_score': round(scores[2]*100, 2)}
 
                 df_predict.loc[len(df_predict)] = new_row

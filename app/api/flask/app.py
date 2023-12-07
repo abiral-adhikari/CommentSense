@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, Response
 from getComments import get_Comment_try
-from LSTM import get_Comment_Analysis_LSTM, get_Comment_Analysis_pagination_LSTM, get_Comment_Analysis_pagination_part_2_LSTM
+from LSTM import get_Comment_Analysis_LSTM, get_Comment_Analysis_pagination_part_2_LSTM
 from GRU import get_Comment_Analysis_GRU, get_Comment_Analysis_pagination_GRU, get_Comment_Analysis_pagination_part_2_GRU
 import numpy as np
 from predict import predict_text_LSTM, predict_text_endpoint
