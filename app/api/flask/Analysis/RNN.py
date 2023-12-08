@@ -6,10 +6,11 @@ from flask import jsonify
 import pandas as pd
 import numpy as np
 import re
-from model import tokenizer_RNN, rnn
+from constants import tokenizer_RNN, rnn
 from keras.preprocessing.sequence import pad_sequences
 from flask import request, jsonify
 from preprocessing import clean_RNN
+from constants import commentCountPerPage
 
 
 def get_Comment_Analysis_RNN():
@@ -29,7 +30,7 @@ def get_Comment_Analysis_RNN():
         # Check if comments is None
         if comments is None:
             return jsonify({"error": "Failed to retrieve comments"}), 500
-        comments = comments[:10]
+        comments = comments[:commentCountPerPage]
 
         for comment in comments:
             initComment = comment

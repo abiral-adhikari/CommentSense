@@ -1,9 +1,10 @@
-from keras.models import load_model, Model
+from keras.models import load_model
 from keras.preprocessing.text import Tokenizer
-import json
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import tokenizer_from_json
 import pickle
+
+commentCountPerPage = 12
 
 # Load Keras model
 lstm = load_model('app/api/flask/Model/LSTM_sentimentmodel.h5')

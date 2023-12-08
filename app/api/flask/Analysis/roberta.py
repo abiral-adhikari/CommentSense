@@ -1,27 +1,25 @@
-from transformers import AutoModelForSequenceClassification
 from transformers import TFAutoModelForSequenceClassification
 from transformers import AutoTokenizer
 import numpy as np
 from scipy.special import softmax
-import csv
-import urllib.request
 import pandas as pd
 from flask import jsonify, request
 from pytube import YouTube
 import re
 from getComments import getComments, getCertainComments
 import json
+from constants import commentCountPerPage
 # Preprocess text (username and link placeholders)
 task = 'sentiment'
 MODEL = f"cardiffnlp/twitter-roberta-base-{task}"
 
-# download label mapping
-labels = []
-mapping_link = f"https://raw.githubusercontent.com/cardiffnlp/tweeteval/main/datasets/{task}/mapping.txt"
-with urllib.request.urlopen(mapping_link) as f:
-    html = f.read().decode('utf-8').split("\n")
-    csvreader = csv.reader(html, delimiter='\t')
-labels = [row[1] for row in csvreader if len(row) > 1]
+# # download label mapping
+# labels = []
+# mapping_link = f"https://raw.githubusercontent.com/cardiffnlp/tweeteval/main/datasets/{task}/mapping.txt"
+# # with urllib.request.urlopen(mapping_link) as f:
+# #     html = f.read().decode('utf-8').split("\n")
+# #     csvreader = csv.reader(html, delimiter='\t')
+# # labels = [row[1] for row in csvreader if len(row) > 1]
 model_Roberta = TFAutoModelForSequenceClassification.from_pretrained(
     MODEL, local_files_only=True)
 tokenizer_Roberta = AutoTokenizer.from_pretrained(MODEL, local_files_only=True)
@@ -59,7 +57,7 @@ def get_Comment_Analysis_Rob():
         # Check if comments is None
         if comments is None:
             return jsonify({"error": "Failed to retrieve comments"}), 500
-        comments = comments[:10]
+        comments = comments[:commentCountPerPage]
         for comment in comments:
             initComment = comment
             comment = preprocess_Roberta(comment)
@@ -68,15 +66,8 @@ def get_Comment_Analysis_Rob():
                 output = model_Roberta(encoded_input)
                 scores = output[0][0].numpy()
                 scores = softmax(scores)
-
-                # ranking = np.argsort(scores)
-                # ranking = ranking[::-1]
                 type = np.argmax(np.array(scores))
                 type = 0 if type == 0 else 4 if type == 2 else 2
-                # for i in range(scores.shape[0]):
-                #     l = labels[ranking[i]]
-                #     s = scores[ranking[i]]
-                #     print(f"{i+1}) {l} {np.round(float(s), 4)}")
                 new_row = {'comment': initComment, "type": type, 'negative_score': round(
                     scores[0]*100, 2), 'neutral_score': round(scores[1]*100, 2), 'positive_score': round(scores[2]*100, 2)}
 

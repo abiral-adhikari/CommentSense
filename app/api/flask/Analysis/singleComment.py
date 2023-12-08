@@ -1,23 +1,11 @@
-import json
 from flask import jsonify, request
-from pytube import YouTube
 from flask import jsonify
-from googleapiclient.discovery import build
-import pandas as pd
 import numpy as np
-from test import data
-from getComments import getComments, getCertainComments
-import re
-from keras.models import Model
-from keras.preprocessing.text import Tokenizer
-from model import lstm, tokenizer_LSTM, tokenizer_RNN, rnn, gru
+from constants import lstm, tokenizer_LSTM, tokenizer_RNN, rnn, gru
 from keras.preprocessing.sequence import pad_sequences
-from preprocessing import clean_LSTM, clean_RNN
-from flask import request, jsonify, Response
-import json
+from flask import request, jsonify
 from preprocessing import removeemoji, filter_english_comments, preprocessing_RNN
-from getComments import commentlist
-from roberta import preprocess_Roberta, tokenizer_Roberta, model_Roberta
+from Analysis.roberta import preprocess_Roberta, tokenizer_Roberta, model_Roberta
 from scipy.special import softmax
 
 
@@ -42,16 +30,22 @@ def single_comment_analysis():
         prediction_LSTM = lstm.predict(padded_sequences)
         result1_LSTM = prediction_LSTM.tolist()
         result_LSTM = result1_LSTM[0]
+        type_LSTM = np.argmax(np.array(result_LSTM))
+        type_LSTM = 0 if type_LSTM == 0 else 4 if type_LSTM == 2 else 2
 
         prediction_GRU = gru.predict(padded_sequences)
         result1_GRU = prediction_GRU.tolist()
         result_GRU = result1_GRU[0]
+        type_GRU = np.argmax(np.array(result_GRU))
+        type_GRU = 0 if type_GRU == 0 else 4 if type_GRU == 2 else 2
 
         sequence_RNN = tokenizer_RNN.texts_to_sequences([comment])
         padded_sequences_RNN = pad_sequences(sequence_RNN, maxlen=100)
         prediction_RNN = rnn.predict(padded_sequences_RNN)
         prediction_RNN = prediction_RNN.tolist()
         result_RNN = prediction_RNN[0]
+        type_RNN = np.argmax(np.array(result_RNN))
+        type_RNN = 0 if type_RNN == 0 else 4 if type_RNN == 2 else 2
 
         comment_rob = preprocess_Roberta(initComment)
         if not comment_rob or comment_rob == "" or comment_rob == ".":
@@ -61,17 +55,17 @@ def single_comment_analysis():
             output = model_Roberta(encoded_input)
             scores = output[0][0].numpy()
             scores = softmax(scores)
-            type = np.argmax(np.array(scores))
-            type = 0 if type == 0 else 4 if type == 2 else 2
+            type_roberta = np.argmax(np.array(scores))
+            type_roberta = 0 if type_roberta == 0 else 4 if type_roberta == 2 else 2
             return jsonify({'comment': initComment,
-                            "LSTM": {'negative_score': round(
+                            "LSTM": {"type": type_LSTM, 'negative_score': round(
                                 result_LSTM[0]*100, 2), 'neutral_score': round(result_LSTM[1]*100, 2), 'positive_score': round(result_LSTM[2]*100, 2)},
-                            "GRU": {'negative_score': round(
+                            "GRU": {"type": type_GRU, 'negative_score': round(
                                 result_GRU[0]*100, 2), 'neutral_score': round(result_GRU[1]*100, 2), 'positive_score': round(result_GRU[2]*100, 2)},
-                            "RNN": {'negative_score': round(
+                            "RNN": {"type": type_RNN, 'negative_score': round(
                                 result_RNN[0]*100, 2), 'neutral_score': round(result_RNN[1]*100, 2), 'positive_score': round(result_RNN[2]*100, 2)},
                             "Roberta": {
-                                "type": type, 'negative_score': round(
+                                "type": type_roberta, 'negative_score': round(
                                     scores[0]*100, 2), 'neutral_score': round(scores[1]*100, 2), 'positive_score': round(scores[2]*100, 2)
                             }
                             })

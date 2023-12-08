@@ -11,6 +11,8 @@ if (!virtualEnvExists) {
   shell.exec("python3 -m venv env");
   console.log("Virtual environment created.");
 } else {
+  shell.exec("\".\\env\\Scripts\\activate\"");
+
   console.log("Virtual environment found.");
 }
 

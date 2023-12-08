@@ -5,6 +5,7 @@ from googleapiclient.discovery import build
 from flask import jsonify
 from preprocessing import filter_english_comments
 from apis import YOUTUBEAPI
+from constants import commentCountPerPage
 
 
 def get_videoid(url):
@@ -21,45 +22,50 @@ commentlist = []
 
 
 def getComments(videoid, pagecountStart, pagecountRange, commentsCount=100):
-    global commentlist
-    commentlist = []
-    pagetoken = None
-    pagecount = pagecountStart
-    while True:
-        comment_request = youtube.commentThreads().list(
-            part='snippet',
-            videoId=videoid,
-            textFormat='plainText',
-            maxResults=10000,
-            pageToken=pagetoken
-        )
-        result = comment_request.execute()
-        for item in result['items']:
-            newComment = item['snippet']['topLevelComment']['snippet']['textDisplay']
-            newComment = filter_english_comments(newComment)
-            if (newComment != "" and newComment != "."):
-                commentlist.append(
-                    item['snippet']['topLevelComment']['snippet']['textDisplay'])
-        # if 'nextPageToken' in result and pagecount<(pagecountStart+pagecountRange):
-        if 'nextPageToken' in result and len(commentlist) < commentsCount:
-            pagetoken = result['nextPageToken']
-            pagecount += 1
-            print(pagecount)
-        else:
-            break
-    print("getComments \t "+str(len(commentlist)))
-    return commentlist
+    try:
+        global commentlist
+        commentlist = []
+        pagetoken = None
+        pagecount = pagecountStart
+        while True:
+            comment_request = youtube.commentThreads().list(
+                part='snippet',
+                videoId=videoid,
+                textFormat='plainText',
+                maxResults=10000,
+                pageToken=pagetoken
+            )
+            result = comment_request.execute()
+            for item in result['items']:
+                newComment = item['snippet']['topLevelComment']['snippet']['textDisplay']
+                newComment = filter_english_comments(newComment)
+                if (newComment != "" and newComment != "."):
+                    commentlist.append(
+                        item['snippet']['topLevelComment']['snippet']['textDisplay'])
+            # if 'nextPageToken' in result and pagecount<(pagecountStart+pagecountRange):
+            if 'nextPageToken' in result and len(commentlist) < commentsCount:
+                pagetoken = result['nextPageToken']
+                pagecount += 1
+                print(pagecount)
+            else:
+                break
+        print("getComments \t "+str(len(commentlist)))
+        return commentlist
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 def getCertainComments(page_number):
-    global commentlist
-    print("getCertainComments LSTM"+str(len(commentlist)))
-    return commentlist[(page_number-1)*10:page_number*10]
+    try:
+        global commentlist
+        print("getCertainComments LSTM"+str(len(commentlist)))
+        return commentlist[(page_number-1)*commentCountPerPage:page_number*commentCountPerPage]
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 def get_Comment_try():
     try:
-
         # video_url = request.args.get('url')
         video_url = "https://www.youtube.com/watch?v=HhjHYkPQ8F0"
 

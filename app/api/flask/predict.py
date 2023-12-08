@@ -1,6 +1,4 @@
-from keras.models import Model
-from keras.preprocessing.text import Tokenizer
-from model import lstm, tokenizer_LSTM, tokenizer_RNN, rnn
+from constants import lstm, tokenizer_LSTM
 from keras.preprocessing.sequence import pad_sequences
 from preprocessing import clean_LSTM, clean_RNN
 from flask import request, jsonify, Response
