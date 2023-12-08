@@ -2,15 +2,11 @@ import json
 from flask import jsonify, request
 from pytube import YouTube
 from flask import jsonify
-from googleapiclient.discovery import build
 import pandas as pd
 import numpy as np
-from test import data
 from getComments import getComments, getCertainComments
 import re
-from keras.models import Model
-from keras.preprocessing.text import Tokenizer
-from model import lstm, tokenizer, tokenizer_RNN, rnn
+from model import lstm, tokenizer_LSTM, tokenizer_RNN, rnn
 from keras.preprocessing.sequence import pad_sequences
 from preprocessing import clean_LSTM, clean_RNN
 from flask import request, jsonify, Response
@@ -46,7 +42,7 @@ def get_Comment_Analysis_LSTM():
             initComment = comment
             comment = clean_RNN(comment)
             if comment and comment != "" and comment != ".":
-                sequence = tokenizer.texts_to_sequences([comment])
+                sequence = tokenizer_LSTM.texts_to_sequences([comment])
                 padded_sequences = pad_sequences(
                     sequence, maxlen=50)
                 prediction = lstm.predict(padded_sequences)
@@ -80,7 +76,7 @@ def get_Comment_Analysis_pagination_part_2_LSTM(page_number):
             initComment = comment
             comment = clean_RNN(comment)
             if comment and comment != "" and comment != ".":
-                sequence = tokenizer.texts_to_sequences([comment])
+                sequence = tokenizer_LSTM.texts_to_sequences([comment])
                 padded_sequences = pad_sequences(
                     sequence, padding='post', maxlen=50)
                 prediction = lstm.predict(padded_sequences)

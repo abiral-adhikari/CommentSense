@@ -22,12 +22,12 @@ with urllib.request.urlopen(mapping_link) as f:
     html = f.read().decode('utf-8').split("\n")
     csvreader = csv.reader(html, delimiter='\t')
 labels = [row[1] for row in csvreader if len(row) > 1]
-model = TFAutoModelForSequenceClassification.from_pretrained(
+model_Roberta = TFAutoModelForSequenceClassification.from_pretrained(
     MODEL, local_files_only=True)
-tokenizer = AutoTokenizer.from_pretrained(MODEL, local_files_only=True)
+tokenizer_Roberta = AutoTokenizer.from_pretrained(MODEL, local_files_only=True)
 
 
-def preprocess(text):
+def preprocess_Roberta(text):
     new_text = []
 
     for t in text.split(" "):
@@ -62,10 +62,10 @@ def get_Comment_Analysis_Rob():
         comments = comments[:10]
         for comment in comments:
             initComment = comment
-            comment = preprocess(comment)
+            comment = preprocess_Roberta(comment)
             if comment and comment != "" and comment != ".":
-                encoded_input = tokenizer(comment, return_tensors='tf')
-                output = model(encoded_input)
+                encoded_input = tokenizer_Roberta(comment, return_tensors='tf')
+                output = model_Roberta(encoded_input)
                 scores = output[0][0].numpy()
                 scores = softmax(scores)
 
@@ -103,10 +103,10 @@ def get_Comment_Analysis_pagination_Rob(page_number):
 
         for comment in comments:
             initComment = comment
-            text = preprocess(comment)
+            text = preprocess_Roberta(comment)
             if comment != "" or comment != ".":
-                encoded_input = tokenizer(text, return_tensors='tf')
-                output = model(encoded_input)
+                encoded_input = tokenizer_Roberta(text, return_tensors='tf')
+                output = model_Roberta(encoded_input)
                 scores = output[0][0].numpy()
                 scores = softmax(scores)
                 type = np.argmax(np.array(scores))

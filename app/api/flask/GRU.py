@@ -10,7 +10,7 @@ from getComments import getComments, getCertainComments
 import re
 from keras.models import Model
 from keras.preprocessing.text import Tokenizer
-from model import lstm, tokenizer, tokenizer_RNN, gru
+from model import lstm, tokenizer_LSTM, tokenizer_RNN, gru
 from keras.preprocessing.sequence import pad_sequences
 from preprocessing import clean_LSTM, clean_RNN
 from flask import request, jsonify, Response
@@ -46,9 +46,9 @@ def get_Comment_Analysis_GRU():
             initComment = comment
             comment = clean_RNN(comment)
             if comment and comment != "" and comment != ".":
-                sequence = tokenizer.texts_to_sequences([comment])
+                sequence = tokenizer_LSTM.texts_to_sequences([comment])
                 padded_sequences = pad_sequences(
-                    sequence, padding='post', maxlen=50)
+                    sequence, maxlen=50)
                 prediction = gru.predict(padded_sequences)
                 result1 = prediction.tolist()
                 result = result1[0]
@@ -95,7 +95,7 @@ def get_Comment_Analysis_pagination_GRU(page_number):
             initComment = comment
             comment = clean_RNN(comment)
             if comment and comment != "" and comment != ".":
-                sequence = tokenizer.texts_to_sequences([comment])
+                sequence = tokenizer_LSTM.texts_to_sequences([comment])
                 padded_sequences = pad_sequences(
                     sequence, padding='post', maxlen=50)
                 prediction = gru.predict(padded_sequences)
@@ -131,7 +131,7 @@ def get_Comment_Analysis_pagination_part_2_GRU(page_number):
             initComment = comment
             comment = clean_RNN(comment)
             if comment and comment != "" and comment != ".":
-                sequence = tokenizer.texts_to_sequences([comment])
+                sequence = tokenizer_LSTM.texts_to_sequences([comment])
                 padded_sequences = pad_sequences(
                     sequence, padding='post', maxlen=50)
                 prediction = gru.predict(padded_sequences)

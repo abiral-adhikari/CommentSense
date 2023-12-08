@@ -43,13 +43,13 @@ const CommentCards = ({
           content: "text-yellow-400 text-small font-semibold",
         };
   const CardColor =
-    type == 0 ? "red-400" : type === 4 ? "green-400" : "yellow-400";
+    type == 0 ? "to-red-400" : type === 4 ? "to-green-400" : "to-yellow-400";
   return (
     <motion.div variants={fadeIn("right", "spring", 0.25 * index, 0.55)}>
       <Card
         className={`
       w-[300px] h-[450px] border-none bg-gradient-to-br from-violet-500
-      to-${CardColor}
+      ${CardColor}
          gap-2`}
         style={{ transition: "opacity 0.05s, transform 0.5s" }}
       >
@@ -104,7 +104,7 @@ const CommentCards = ({
 
           <Divider orientation="horizontal" />
           <ScrollShadow className="w-full h-[90%]">
-            <p className="ml-2 w-[90%] font-medium text-white sm:text-xl">
+            <p className="ml-2 w-[90%] text-center font-medium text-white sm:text-xl">
               {comment}
             </p>
           </ScrollShadow>

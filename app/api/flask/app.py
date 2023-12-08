@@ -8,6 +8,8 @@ from test import data
 from roberta import get_Comment_Analysis_Rob, get_Comment_Analysis_pagination_Rob
 from RNN import get_Comment_Analysis_RNN, get_Comment_Analysis_pagination_RNN
 from flask_cors import CORS
+from singleComment import single_comment_analysis
+
 
 app = Flask(__name__)
 CORS(app)
@@ -74,7 +76,14 @@ def get_comments_Analysis_pagination():
 
 @app.route('/predict/text', methods=['GET'])
 def predict_endpoint():
-    return predict_text_endpoint()
+    print
+    return single_comment_analysis()
+    # return predict_text_endpoint()
+
+
+# @app.route('/predict/texts', methods=['GET'])
+# def predict_endpoint():
+#     return predict_text_endpoint()
 
 
 @app.route('/')
