@@ -5,7 +5,8 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.stem import PorterStemmer
 nltk.download('stopwords')
-
+nltk.download("punkt")
+nltk.download("wordnet")
 # function to completely remove the emojis from the comments using re
 def removeemoji(text):
     # Define a regular expression pattern to match emojis
@@ -43,7 +44,7 @@ def filter_english_comments(text):
         try:
             # print(sentence)
             # print(detect(sentence))
-            if detect(sentence)=="en" and detect_langs(text)[0].prob>=0.7:
+            if detect(sentence)=="en" and detect_langs(text)[0].prob>=0.8:
                 englishcomments.append(sentence)
             else:
                 englishcomments.append("")
@@ -457,10 +458,11 @@ def clean_LSTM(text):
     sent=preprocessing(text)
     # print(sent)
     return sent
+
 def clean_RNN(text):
     sent=removeemoji(text)
     sent=filter_english_comments(sent)
     sent=preprocessing_RNN(text)
     print(sent)
     return sent
-    
+

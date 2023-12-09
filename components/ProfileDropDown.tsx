@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useRouter } from 'next/router';
 import {
   Dropdown,
   DropdownTrigger,
@@ -9,6 +10,22 @@ import {
 } from "@nextui-org/react";
 
 export default function ProfileDropDown() {
+  // const router = useRouter();
+  // const handleLogout = async () => {
+  //   try {
+  //     // Add any additional logic you need before logging out
+  //     // Clear the session token
+  //     await signOut({ redirect: false });
+
+  //     // Mutate the session to reflect the logout
+  //     mutate();
+  //     // Redirect to the login page
+  //     router.push('/login');
+  //   } catch (error) {
+  //     console.error('Logout error:', error);
+  //   }
+  // };
+
   return (
     <div className="flex items-center gap-4">
       <Dropdown placement="bottom-end">
@@ -31,7 +48,7 @@ export default function ProfileDropDown() {
             My Profile
           </DropdownItem>
 
-          <DropdownItem key="logout" color="danger" href="./signout">
+          <DropdownItem key="logout" color="danger" href="./api/auth/signout">
             Log Out
           </DropdownItem>
         </DropdownMenu>
@@ -39,3 +56,5 @@ export default function ProfileDropDown() {
     </div>
   );
 }
+
+

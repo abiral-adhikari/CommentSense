@@ -193,7 +193,7 @@ const Searchbar = () => {
             type="text"
             value={youtubeLink}
             onChange={(e) => setYoutubeLink(e.target.value)}
-            placeholder="Enter product Link"
+            placeholder="Enter youtube link"
             className="searchbar-input"
           ></input>
           <button

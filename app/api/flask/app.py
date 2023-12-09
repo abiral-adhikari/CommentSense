@@ -3,9 +3,9 @@ from getComments import get_Comment_try
 from LSTM import get_Comment_Analysis_LSTM, get_Comment_Analysis_pagination_LSTM, get_Comment_Analysis_pagination_part_2_LSTM
 from GRU import get_Comment_Analysis_GRU, get_Comment_Analysis_pagination_GRU, get_Comment_Analysis_pagination_part_2_GRU
 import numpy as np
-from predict import predict_text_LSTM, predict_text_endpoint
+from predict import predict_text_LSTM, predict_text_endpoint,textprediction
 from test import data
-from roberta import get_Comment_Analysis_Rob, get_Comment_Analysis_pagination_Rob
+# from roberta import get_Comment_Analysis_Rob, get_Comment_Analysis_pagination_Rob
 from RNN import get_Comment_Analysis_RNN, get_Comment_Analysis_pagination_RNN
 from flask_cors import CORS
 
@@ -46,8 +46,8 @@ def get_comments_Analysis():
         return get_Comment_Analysis_LSTM()
     if (model == "RNN"):
         return get_Comment_Analysis_RNN()
-    if (model == "Roberta"):
-        return get_Comment_Analysis_Rob()
+    # if (model == "Roberta"):
+    #     return get_Comment_Analysis_Rob()
     else:
         return get_Comment_Analysis_GRU()
 
@@ -59,8 +59,8 @@ def get_comments_Analysis_pagination():
         return get_Comment_Analysis_pagination_part_2_LSTM(pageNumber)
     if (model == "RNN"):
         return get_Comment_Analysis_pagination_RNN(pageNumber)
-    if (model == "Roberta"):
-        return get_Comment_Analysis_pagination_Rob(pageNumber)
+    # if (model == "Roberta"):
+    #     return get_Comment_Analysis_pagination_Rob(pageNumber)
     else:
         return get_Comment_Analysis_pagination_part_2_GRU(pageNumber)
 
@@ -72,9 +72,10 @@ def get_comments_Analysis_pagination():
     # return get_Comment_Analysis()
 
 
-@app.route('/predict/text', methods=['GET'])
+@app.route('/predicttext', methods=['GET'])
 def predict_endpoint():
-    return predict_text_endpoint()
+    text=request.args.get("text")
+    return textprediction(text)
 
 
 @app.route('/')

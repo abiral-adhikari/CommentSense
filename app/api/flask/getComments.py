@@ -11,7 +11,8 @@ from keras.preprocessing.sequence import pad_sequences
 from preprocessing import clean_LSTM,clean_RNN
 from flask import request,jsonify,Response
 from preprocessing import filter_english_comments
-from apis import YOUTUBEAPI
+# from apis import YOUTUBEAPI
+YOUTUBEAPI="AIzaSyCT7XGku7WgM36gSkAdIqaEKnyIxT4GqJo"
 import re
 def get_videoid(url):
     try:

@@ -7,10 +7,11 @@ import UserLogin from "@/lib/model/userLogin.model";
 import { connectToDB } from "@/lib/mongoose";
 const bcrypt = require("bcrypt");
 import { NextResponse } from "next/server";
+import NextAuth, { Session, User } from 'next-auth';
 export const options: NextAuthOptions = {
   pages: {
     signIn: "/login",
-    // signOut: "/auth/signout",
+    signOut: "/signout",
     error: "/auth/error", // Error code passed in query string as ?error=
     verifyRequest: "/auth/verify-request", // (used for check email message)
     newUser: "/register",
@@ -83,6 +84,14 @@ export const options: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
+    maxAge:60*60
+  },
+  callbacks:{
+    async jwt({token,user}){
+      if(user)token.email=user.email
+      console.log(token.email)
+      return token
+    }
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
