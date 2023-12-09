@@ -6,7 +6,9 @@ import {
   ADD_COMMENT_DATA_PAGINATION,
   ADD_COMMENT_DATA_SUCCESS,
   ADD_TEXT,
+  IS_SHOW_ERROR_MODAL,
   IS_SHOW_SPINNER,
+  IS_SHOW_SUCESS_MODAL,
   REMOVE_TEXT,
   RESET_COMMENT_DATA_PAGINATION,
   RESET_COMMENT_DATA_SUCCESS,
@@ -55,14 +57,31 @@ const Textbar = () => {
         type: ADD_TEXT,
         payload: response.data,
       });
+      dispatch({
+        type: IS_SHOW_SUCESS_MODAL,
+        payload: {
+          isShow: false,
+          title: "Sucess",
+          description: "Text is successfully analyzed",
+        },
+      });
+      // dispatch({
+      //   type: IS_SHOW_SPINNER,
+      //   payload: false,
+      // });
     } catch (error: any) {
+      dispatch({
+        type: IS_SHOW_ERROR_MODAL,
+        payload: {
+          isShow: true,
+          title: "Error",
+          description: `${error.response?.data.error}`,
+        },
+      });
       console.log("Error fetching data:", error);
       console.log("Error fetching data:", error.response?.data);
+      console.log("Error fetching data:", error.response?.data.error);
     }
-    dispatch({
-      type: IS_SHOW_SPINNER,
-      payload: false,
-    });
   };
 
   return (
