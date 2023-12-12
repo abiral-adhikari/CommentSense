@@ -10,6 +10,7 @@ import { datassss } from "@/lib/CommentsData";
 import CommentSection from "@/components/CommentSection";
 
 import ModelDetailSection from "@/components/ModelDetailSection";
+import Link from "next/link";
 // import Sidebar from "@/components/Sidebar";
 export default async function Home() {
   return (
@@ -34,6 +35,26 @@ export default async function Home() {
             Powerful, self-serve product and growth analytics to help you
             convert, engage, and retain more.
           </p>
+          <p>
+            Try it out with
+            <Link
+              className="text-blue-500 font-bold underline"
+              href={"https://www.youtube.com/"}
+              target="_"
+            >
+              {" "}
+              Youtube{" "}
+            </Link>
+            Link or instead try for{" "}
+            <Link
+              className="text-blue-500 font-bold underline"
+              href={"./predict"}
+            >
+              {" "}
+              Single Text{" "}
+            </Link>
+          </p>
+
           <Searchbar />
           <Divider className="my-1 mt-6" />
           <ModelDetailSection />

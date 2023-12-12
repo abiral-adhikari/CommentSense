@@ -41,10 +41,10 @@ const ModelDetailSection = () => {
     },
     {
       model: "RNN",
-      accuracy: "0",
-      precision: "0",
-      recall: "0",
-      f1: "0",
+      accuracy: "86.72%",
+      precision: "0.86",
+      recall: "0.86",
+      f1: "0.86",
     },
   ];
 
@@ -103,27 +103,3 @@ const ModelDetailSection = () => {
 };
 
 export default ModelDetailSection;
-{
-  /*  <CardBody className="pl-8 ">
-              <div className="flex flex-row">
-                <p>Accuracy</p>
-                <div className="flex-grow border-b border-dotted border-black"></div>
-                <p>Neutral</p>
-              </div>{" "}
-              <div className="flex justify-between">
-                <p>Precision</p>
-                <div className="flex-grow border-b border-dotted border-black"></div>
-                <p>Recall</p>
-              </div>
-              <div className="flex justify-between">
-                <p>F1</p>
-                <div className="flex-grow border-b border-dotted border-black"></div>
-                <p>Neutral</p>
-              </div>
-              <div className="flex justify-between">
-                <p>Accuracy</p>
-                <div className="flex-grow border-b border-dotted border-black"></div>
-                <p>Neutral</p>
-              </div>
-            </CardBody> */
-}
